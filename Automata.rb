@@ -1,7 +1,7 @@
 class Automata
 
   #symbols_list: list of symbols that the automata can process (eg.: '0,1' , 'a,b,c' etc)
-  def initialize(symbols_list, states_count)
+  def initialize(symbols_list, states_count, transition_matrix)
     if (symbols_list.uniq.count != symbols_list.count)
       puts "Symbols: #{symbols_list} are not unique!"
     end
@@ -9,13 +9,17 @@ class Automata
     self.symbols_list = symbols_list
     self.states_count = states_count
     self.current_state = 0
-    init_transition_lists
+    if transition_matrix
+      self.transition_matrix = transition_matrix
+    else
+      init_transition_matrix()
+    end
   end
 
   #Computes a single symbol -> changes the automata's current state to the appropriate one.
   # symbol: the symbol to be computed (eg.: '0', 'a', 'X')
   def compute_symbol(symbol)
-    transition_lists[symbols_list.index(symbol)][current_state]
+    transition_matrix[symbols_list.index(symbol)][current_state]
   end
 
   # word: a list of symbols for the automata to compute (eg.: 'aabccaaa')
@@ -45,28 +49,28 @@ class Automata
     return true
   end
 
-  def print_transition_list
-    symbols_list.each { |symbol| puts "Transition list[#{symbol}] = #{transition_lists[symbols_list.index(symbol)]}" }
+  def print_transition_matrix
+    symbols_list.each { |symbol| puts "Transition matrix[#{symbol}] = #{transition_matrix[symbols_list.index(symbol)]}" }
   end
 
   private
 
-  attr_accessor :symbols_list, :states_count, :current_state, :transition_lists
+  attr_accessor :symbols_list, :states_count, :current_state, :transition_matrix
 
   # returns: Matrix n x m, where n = symbols count, m = states count, initialized with zeros.
-  def init_transition_lists
-    self.transition_lists = []
+  def init_transition_matrix
+    self.transition_matrix = []
 
     symbols_list.each do |symbol|
-      transition_lists << []
+      transition_matrix << []
       (1..states_count).each do |i|
-        transition_lists[symbols_list.index(symbol)] << 0
+        transition_matrix[symbols_list.index(symbol)] << 0
       end
     end
   end
 end
 
-automata = Automata.new(['a', 'b', 'c', 'd'], 3)
-automata.print_transition_list
+automata = Automata.new(['a', 'b', 'c', 'd'], 3, nil)
+automata.print_transition_matrix
 puts "#{automata.is_word_from_alphabet('baba')}"
 puts "Current state = #{automata.compute_word('baba')}"

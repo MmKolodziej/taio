@@ -87,4 +87,4 @@ if __FILE__ == $0
   # execute the algorithm
   best = search(max_gens, search_space, vel_space, pop_size, max_vel, c1,c2)
   puts "done! Solution: f=#{best[:cost]}, s=#{best[:position].inspect}"
-each_with_index
+end
