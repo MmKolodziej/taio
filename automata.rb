@@ -19,14 +19,14 @@ class Automata
   #Computes a single symbol -> changes the automata's current state to the appropriate one.
   # symbol: the symbol to be computed (eg.: '0', 'a', 'X')
   def compute_symbol(symbol)
-    transition_matrix[symbol][current_state]
+    transition_matrix[symbols_list.index(symbol)][current_state]
   end
 
   # word: a list of symbols for the automata to compute (eg.: 'aabccaaa')
-  # returns: End state if computations successful, False if word does not belong to automata alphabet
+  # returns: End state if computations successfull, False if word does not belong to automata alphabet
   def compute_word(word)
-    if not is_word_from_alphabet(word)
-      return nil
+    if not word_is_from_alphabet?(word)
+      return
     end
 
     word.each_char do |symbol|
@@ -42,15 +42,30 @@ class Automata
   end
 
 
-  def is_word_from_alphabet(word)
-    word.each_char { |symbol| return false if not symbols_list.include? symbol }
+  def word_is_from_alphabet?(word)
+    word.each_char do |symbol|
+      return false unless symbols_list.include? symbol
+    end
 
     return true
   end
 
   def print_transition_matrix
     symbols_list.each do |symbol|
-      puts "Transition matrix[#{symbol}] = #{transition_matrix[symbol]}"
+      puts "Transition matrix[#{symbol}] = #{transition_matrix[symbols_list.index(symbol)]}"
+    end
+  end
+
+  def set_transition_matrix_from_vector(vector)
+    row_index, col_index = 0, 0
+    while row_index < symbols_list.count
+      while col_index < states_count
+        vector_index = row_index * states_count + col_index
+        transition_matrix[row_index][col_index] = Integer(vector[vector_index])
+        col_index += 1
+      end
+      row_index += 1
+      col_index = 0
     end
   end
 
@@ -63,9 +78,9 @@ class Automata
     self.transition_matrix = []
 
     symbols_list.each do |symbol|
-      transition_matrix << {symbol => []}
-      (1..states_count).each do |i|
-        transition_matrix[symbol] << 0
+      transition_matrix << []
+      states_count.times do
+        transition_matrix[symbols_list.index(symbol)] << 0
       end
     end
   end

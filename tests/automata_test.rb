@@ -21,16 +21,16 @@ class AutomataTest < Test::Unit::TestCase
     symbols_list = %w(a b c)
     target = Automata.new(symbols_list, 2, nil)
 
-    assert_equal(true, target.is_word_from_alphabet('aaccabba'))
-    assert_equal(false, target.is_word_from_alphabet('aacbdd'))
+    assert_equal(true, target.word_is_from_alphabet?('aaccabba'))
+    assert_equal(false, target.word_is_from_alphabet?('aacbdd'))
   end
 
   def test_is_word_from_alphabet_single_symbol_word
     symbols_list = %w(a b c)
     target = Automata.new(symbols_list, 2, nil)
 
-    assert_equal(true, target.is_word_from_alphabet('a'))
-    assert_equal(false, target.is_word_from_alphabet('x'))
+    assert_equal(true, target.word_is_from_alphabet?('a'))
+    assert_equal(false, target.word_is_from_alphabet?('x'))
   end
 
   def test_automata_compute_word_method_validation
@@ -54,10 +54,8 @@ class AutomataTest < Test::Unit::TestCase
   #       Should return  {Not_accepted} for '01001','00001'
   #       and {accepted} for '0', '101011'
   binary_symbols_list = %w(0 1)
-  transition_matrix = {
-      '0' => [1, 2, 2, 3],
-      '1' => [3, 2, 2, 3]
-  }
+  transition_matrix = [[1, 2, 2, 3],
+                       [3, 2, 2, 3]]
   a = Automata.new(binary_symbols_list, 4, transition_matrix)
 
   accepting_states = [1, 3]
@@ -79,10 +77,7 @@ class AutomataTest < Test::Unit::TestCase
   def test_simple_regex_words
     # First, a "b{0,1}a*b" regex language
     symbols = %w(a b)
-    transition_matrix = {
-        'a' => [1, 1, -1],
-        'b' => [1, 2, -1]
-    }
+    transition_matrix = [[1, 1, -1],[1, 2, -1]]
 
     a = Automata.new(symbols, 3, transition_matrix)
     accepting_states = [2]
