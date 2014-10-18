@@ -19,14 +19,13 @@ class Automata
   #Computes a single symbol -> changes the automata's current state to the appropriate one.
   # symbol: the symbol to be computed (eg.: '0', 'a', 'X')
   def compute_symbol(symbol)
-    transition_matrix[symbols_list.index(symbol)][current_state]
+    transition_matrix[symbol][current_state]
   end
 
   # word: a list of symbols for the automata to compute (eg.: 'aabccaaa')
-  # returns: End state if computations successfull, False if word does not belong to automata alphabet
+  # returns: End state if computations successful, False if word does not belong to automata alphabet
   def compute_word(word)
     if not is_word_from_alphabet(word)
-      puts "The given word is not valid"
       return nil
     end
 
@@ -50,7 +49,9 @@ class Automata
   end
 
   def print_transition_matrix
-    symbols_list.each { |symbol| puts "Transition matrix[#{symbol}] = #{transition_matrix[symbols_list.index(symbol)]}" }
+    symbols_list.each do |symbol|
+      puts "Transition matrix[#{symbol}] = #{transition_matrix[symbol]}"
+    end
   end
 
   private
@@ -62,15 +63,10 @@ class Automata
     self.transition_matrix = []
 
     symbols_list.each do |symbol|
-      transition_matrix << []
+      transition_matrix << {symbol => []}
       (1..states_count).each do |i|
-        transition_matrix[symbols_list.index(symbol)] << 0
+        transition_matrix[symbol] << 0
       end
     end
   end
 end
-
-automata = Automata.new(['a', 'b', 'c', 'd'], 3, nil)
-automata.print_transition_matrix
-puts "#{automata.is_word_from_alphabet('baba')}"
-puts "Current state = #{automata.compute_word('baba')}"
