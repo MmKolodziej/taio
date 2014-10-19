@@ -4,10 +4,11 @@ class MyTest < Test::Unit::TestCase
 
   def test_ocr_pso
     #init the pso object
+    images_filepath = '../spec/fixtures/image_1.csv'
     symbols_list = ['0', '1']
     states_count = 4
 
-    pso =  OCR_PSO.new(symbols_list, states_count)
+    pso =  OCR_PSO.new(symbols_list, states_count,images_filepath)
 
     # problem configuration
     problem_size = states_count * symbols_list.count
