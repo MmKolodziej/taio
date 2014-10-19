@@ -9,14 +9,15 @@ class Automata
     self.symbols_list = symbols_list
     self.states_count = states_count
     self.current_state = 0
+
     if transition_matrix
       self.transition_matrix = transition_matrix
     else
-      init_transition_matrix()
+      init_transition_matrix
     end
   end
 
-  #Computes a single symbol -> changes the automata's current state to the appropriate one.
+  # Computes a single symbol -> changes the automata's current state to the appropriate one.
   # symbol: the symbol to be computed (eg.: '0', 'a', 'X')
   def compute_symbol(symbol)
     transition_matrix[symbols_list.index(symbol)][current_state]
@@ -25,9 +26,7 @@ class Automata
   # word: a list of symbols for the automata to compute (eg.: 'aabccaaa')
   # returns: End state if computations successfull, False if word does not belong to automata alphabet
   def compute_word(word)
-    if not word_is_from_alphabet?(word)
-      return
-    end
+    return unless word_is_from_alphabet?(word)
 
     word.each_char do |symbol|
       self.current_state = compute_symbol(symbol)
@@ -35,19 +34,18 @@ class Automata
 
     end_state = current_state
 
-    #reset the current_state for future computations
+    # reset the current_state for future computations
     self.current_state = 0
 
-    return end_state
+    end_state
   end
-
 
   def word_is_from_alphabet?(word)
     word.each_char do |symbol|
-      return false unless symbols_list.include? symbol
+      return false unless symbols_list.include?(symbol)
     end
 
-    return true
+    true
   end
 
   def print_transition_matrix
@@ -58,12 +56,14 @@ class Automata
 
   def set_transition_matrix_from_vector(vector)
     row_index, col_index = 0, 0
+
     while row_index < symbols_list.count
       while col_index < states_count
         vector_index = row_index * states_count + col_index
         transition_matrix[row_index][col_index] = Integer(vector[vector_index])
         col_index += 1
       end
+
       row_index += 1
       col_index = 0
     end
