@@ -1,3 +1,5 @@
+require 'csv'
+
 class SampleImage
   NORMALIZATION_FACTORS = {
     factor0: { min: 0, max: 5 },
@@ -7,23 +9,26 @@ class SampleImage
     factor4: { min: 0, max: 1 },
   }
 
-  attr_accessor :name, :symbols_vector
+  attr_accessor :name, :filepath, :symbols_vector
 
-  def initialize(filepath, name, symbols_list)
+  def initialize(filepath, name)
     self.name = name
+    self.filepath = filepath
+  end
 
+  def map_factors(symbols_list)
     self.symbols_vector = initialize_symbols_vector(filepath, symbols_list)
   end
 
   def initialize_symbols_vector(filepath, symbols_list)
-    coeficient_vector = CSV.read(filepath, col_sep: ';').map(&:to_hash)
+    coeficient_vector = CSV.read(filepath, col_sep: ';').flatten.map(&:to_f)
     create_symbols_vector(symbols_list, normalize(coeficient_vector))
   end
 
   def normalize(vector)
     vector.each_with_index.map do |val, index|
       current_factor_constants = NORMALIZATION_FACTORS["factor#{index}".to_sym]
-      (val - current_factor_constants[:min]) / (current_factor_constants[:max] - current_factor_constants[:min])
+      (val - current_factor_constants[:min]).to_f / (current_factor_constants[:max] - current_factor_constants[:min])
     end
   end
 
