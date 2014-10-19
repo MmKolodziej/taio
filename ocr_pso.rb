@@ -1,6 +1,11 @@
 require_relative'dfa_pso.rb'
 
-class OCR_PSO < DFA_PSO
+class OCR_PSO < Rounded_PSO
+  def initialize(symbols_list, states_count, images_filepath)
+    @dfa = Automata.new(symbols_list, states_count, nil)
+    #init images from filepath
+  end
+
   def objective_function
     #for wektor_cech in obrazki
     #wektor_cech.normalizuj_i_zaokraglij
