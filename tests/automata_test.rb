@@ -1,5 +1,4 @@
 require 'test/unit'
-
 require_relative '../automata.rb'
 
 class AutomataTest < Test::Unit::TestCase
@@ -50,22 +49,22 @@ class AutomataTest < Test::Unit::TestCase
   end
 
   def test_binary_words_with_non_important_zeroes
-  # Binary word with non-important zeroes
-  #       Should return  {Not_accepted} for '01001','00001'
-  #       and {accepted} for '0', '101011'
-  binary_symbols_list = %w(0 1)
-  transition_matrix = [[1, 2, 2, 3],
-                       [3, 2, 2, 3]]
-  a = Automata.new(binary_symbols_list, 4, transition_matrix)
+    # Binary word with non-important zeroes
+    #       Should return  {Not_accepted} for '01001','00001'
+    #       and {accepted} for '0', '101011'
+    binary_symbols_list = %w(0 1)
+    transition_matrix = [[1, 2, 2, 3],
+                         [3, 2, 2, 3]]
+    a = Automata.new(binary_symbols_list, 4, transition_matrix)
 
-  accepting_states = [1, 3]
+    accepting_states = [1, 3]
 
-  incorrect_binary_words = %w(01001 00001 010100010)
-  correct_binary_words = %w(0 101011 1010100010)
+    incorrect_binary_words = %w(01001 00001 010100010)
+    correct_binary_words = %w(0 101011 1010100010)
 
-  incorrect_binary_words.each do |word|
-    end_state = a.compute_word(word)
-    assert_equal(false, accepting_states.include?(end_state))
+    incorrect_binary_words.each do |word|
+      end_state = a.compute_word(word)
+      assert_equal(false, accepting_states.include?(end_state))
     end
 
     correct_binary_words.each do |word|

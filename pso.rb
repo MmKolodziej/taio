@@ -1,43 +1,39 @@
 class PSO
-
-
   def objective_function(vector)
-    ret_val = 0
-    ret_val = (vector[0]-2)**2 -11
-    return ret_val
+    (vector[0]-2)**2 -11
   end
 
   def random_vector(minmax)
-    return Array.new(minmax.size) do |i|
-      minmax[i][0] + (minmax[i][1] - minmax[i][0]) * rand()
+    Array.new(minmax.size) do |i|
+      minmax[i][0] + (minmax[i][1] - minmax[i][0]) * rand
     end
   end
 
   def create_particle(search_space, vel_space)
     particle = {}
-    particle[:position] = random_vector(search_space)
-    particle[:cost] = objective_function(particle[:position])
+    particle[:position]   = random_vector(search_space)
+    particle[:cost]       = objective_function(particle[:position])
     particle[:b_position] = Array.new(particle[:position])
-    particle[:b_cost] = particle[:cost]
-    particle[:velocity] = random_vector(vel_space)
-    return particle
+    particle[:b_cost]     = particle[:cost]
+    particle[:velocity]   = random_vector(vel_space)
+    particle
   end
 
   def get_global_best(population, current_best=nil)
     population.sort! { |x, y| x[:cost] <=> y[:cost] }
     best = population.first
-    if current_best.nil? or best[:cost] <= current_best[:cost]
+    if current_best.nil? || best[:cost] <= current_best[:cost]
       current_best = {}
       current_best[:position] = Array.new(best[:position])
-      current_best[:cost] = best[:cost]
+      current_best[:cost]     = best[:cost]
     end
-    return current_best
+    current_best
   end
 
   def update_velocity(particle, gbest, max_v, c1, c2)
     particle[:velocity].each_with_index do |v, i|
-      v1 = c1 * rand() * (particle[:b_position][i] - particle[:position][i])
-      v2 = c2 * rand() * (gbest[:position][i] - particle[:position][i])
+      v1 = c1 * rand * (particle[:b_position][i] - particle[:position][i])
+      v2 = c2 * rand * (gbest[:position][i] - particle[:position][i])
       particle[:velocity][i] = v + v1 + v2
       particle[:velocity][i] = max_v if particle[:velocity][i] > max_v
       particle[:velocity][i] = -max_v if particle[:velocity][i] < -max_v
@@ -48,10 +44,10 @@ class PSO
     part[:position].each_with_index do |v, i|
       part[:position][i] = v + part[:velocity][i]
       if part[:position][i] > bounds[i][1]
-        part[:position][i]=bounds[i][1] #-(part[:position][i]-bounds[i][1]).abs THIS A BUG
+        part[:position][i] = bounds[i][1] #-(part[:position][i]-bounds[i][1]).abs THIS A BUG
         part[:velocity][i] *= -1.0
       elsif part[:position][i] < bounds[i][0]
-        part[:position][i]=bounds[i][0] #+(part[:position][i]-bounds[i][0]).abs
+        part[:position][i] = bounds[i][0] #+(part[:position][i]-bounds[i][0]).abs
         part[:velocity][i] *= -1.0
       end
     end
@@ -76,14 +72,14 @@ class PSO
       gbest = get_global_best(pop, gbest)
       puts " > gen #{gen+1}, fitness=#{gbest[:cost]}, position=#{gbest[:position]}"
     end
-    return gbest
+    gbest
   end
 end
 
 #PSO for integers search only. The difference between the parent class is in added rounding in some methods
 class Rounded_PSO < PSO
   def random_vector(minmax)
-    return Array.new(minmax.size) do |i|
+    Array.new(minmax.size) do |i|
       minmax[i][0] + ((minmax[i][1] - minmax[i][0]) * rand()).round
     end
   end
