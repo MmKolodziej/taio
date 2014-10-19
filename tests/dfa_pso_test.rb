@@ -19,9 +19,9 @@ class DFA_PSO_Test < Test::Unit::TestCase
     # algorithm configuration
     vel_space = Array.new(problem_size) { |i| [-1, 1] }
     max_gens = 100
-    pop_size = 50
+    pop_size = 300
     max_vel = 100.0
-    c1, c2 = 2.0, 2.0
+    c1, c2 = 3.0, 2.0
 
     # execute the algorithm
     best = pso.search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)

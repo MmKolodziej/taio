@@ -1,7 +1,7 @@
 require_relative "pso.rb"
 require_relative "automata.rb"
 
-class DFA_PSO < PSO
+class DFA_PSO < Rounded_PSO
 
   def initialize(symbols_list, states_count, accepting_states)
     @accepting_states = accepting_states
@@ -13,7 +13,7 @@ class DFA_PSO < PSO
 
   def objective_function(vector)
     errors_count = 0
-    @dfa.set_transition_matrix_from_vector(vector) #TODO: implement this in automata class
+    @dfa.set_transition_matrix_from_vector(vector)
 
 
     @correct_words.each do |word|

@@ -69,6 +69,10 @@ class Automata
     end
   end
 
+  def transition_matrix_to_matrices
+    #TODO: implement
+  end
+
   private
 
   attr_accessor :symbols_list, :states_count, :current_state, :transition_matrix
