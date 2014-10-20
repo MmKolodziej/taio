@@ -1,4 +1,11 @@
 class PSO
+
+  def initialize(verbose=true)
+    self.verbose = verbose
+  end
+
+  attr_accessor :verbose
+
   def objective_function(vector)
     (vector[0]-2)**2 -11
   end
@@ -60,6 +67,7 @@ class PSO
   end
 
   def search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
+    puts "computing..."
     pop = Array.new(pop_size) { create_particle(search_space, vel_space) }
     gbest = get_global_best(pop)
     max_gens.times do |gen|
@@ -70,7 +78,9 @@ class PSO
         update_best_position(particle)
       end
       gbest = get_global_best(pop, gbest)
-      puts " > gen #{gen+1}, fitness=#{gbest[:cost]}, position=#{gbest[:position]}"
+      if verbose
+        puts " > gen #{gen+1}, fitness=#{gbest[:cost]}, position=#{gbest[:position]}"
+      end
     end
     gbest
   end

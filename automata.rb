@@ -28,7 +28,7 @@ class Automata
   def compute_word(word)
     return unless word_is_from_alphabet?(word)
 
-    word.each_char do |symbol|
+    word.each do |symbol|
       self.current_state = compute_symbol(symbol)
     end
 
@@ -41,7 +41,7 @@ class Automata
   end
 
   def word_is_from_alphabet?(word)
-    word.each_char do |symbol|
+    word.each do |symbol|
       return false unless symbols_list.include?(symbol)
     end
 
@@ -87,5 +87,16 @@ class Automata
         transition_matrix[symbols_list.index(symbol)] << 0
       end
     end
+  end
+
+  def self.generate_symbols_list(count)
+    # generates a count - length array of symbols
+    symbols = []
+    i = 0
+    while i < count
+      symbols << i.to_s
+      i += 1
+    end
+    symbols
   end
 end
