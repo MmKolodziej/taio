@@ -1,5 +1,6 @@
-class PSO
+require 'random_gaussian'
 
+class PSO
   def initialize(verbose=true)
     self.verbose = verbose
   end
@@ -11,6 +12,7 @@ class PSO
   end
 
   def random_vector(minmax)
+    # We will need some gaussian random shit here I suppose
     Array.new(minmax.size) do |i|
       minmax[i][0] + (minmax[i][1] - minmax[i][0]) * rand
     end
