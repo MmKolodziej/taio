@@ -46,12 +46,12 @@ class SampleImage
 end
 
 class ImageSample
-  
+
   def initialize(values_vector, normalization_vector)
     self.image_class = Integer(values_vector[0])
     self.characteristics =[]
-    
-    values_vector.each_with_index do |val,index|
+
+    values_vector.each_with_index do |val, index|
       if index > 0
         self.characteristics << val
       end
@@ -62,7 +62,7 @@ class ImageSample
   end
 
   attr_accessor :image_class, :characteristics, :word
-  
+
   def self.get_rows_from_csv(filepath)
     # returns rows from the csv, converted to float arrays
     rows = []
@@ -97,14 +97,14 @@ class ImageSample
       end
     end
     puts "max values vector is #{max_columns}"
-    
-    lines.each { |line| sample_images << ImageSample.new(line,max_columns)}
+
+    lines.each { |line| sample_images << ImageSample.new(line, max_columns) }
     puts "loaded #{sample_images.count} images"
     sample_images
   end
-  
+
   def self.normalize_vector(vector, normalization_vector)
-    vector.each_with_index.map do |val,index |
+    vector.each_with_index.map do |val, index|
       val / normalization_vector[index]
     end
   end
@@ -124,4 +124,37 @@ class ImageSample
   def get_word
     self.word
   end
+end
+
+class ImageSampleTemplate
+
+  def initialize(image_class, no_of_characteristics)
+    self.image_class = image_class
+    self.characteristics_range = Array.new(no_of_characteristics)
+  end
+
+  attr_accessor :image_class, :characteristics_ranges
+
+  def print
+    puts image_class characteristics_ranges
+  end
+end
+
+class ImageSamplesGenerator
+  #factory class
+
+  def generate_image_samples(no_of_classes, no_of_characteristics = 5, no_of_objects = 20, ranges_vector = nil)
+    if not ranges_vector
+      # default max range
+      # maybe change to random vals from [0,100]
+      ranges_vector = Array.new(no_of_characteristics) { [0, 100] }
+    end
+    
+    classes = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, no_of_characteristics) }
+
+    classes.each { | | . }
+
+  end
+
+
 end
