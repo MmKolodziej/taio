@@ -23,7 +23,7 @@ class OCR_PSO < Rounded_PSO
     images.each do |image|
       word = []
       image.get_characteristics.each do |val|
-        symbols_index = (Integer(val * intervals)) + 1
+        symbols_index = ((val * intervals).to_i) + 1
         symbol = symbols_list[symbols_index]
         word << symbol
       end
@@ -39,7 +39,7 @@ class OCR_PSO < Rounded_PSO
     errors_count = 0
 
     sample_images.each do |image|
-      end_state = dfa.compute_word(image.get_word)
+      end_state = dfa.compute_word(image.word)
       if end_state != image.image_class
         errors_count += 1
       end
@@ -48,13 +48,13 @@ class OCR_PSO < Rounded_PSO
     errors_count
   end
 
-  def get_classes_count
+  def classes_count
     # returns the number of unique image classses
-    (self.sample_images.uniq { |img| img.image_class}).count
+    sample_images.uniq { |img| img.image_class}.size
   end
 
-  def get_images_count
-    self.sample_images.count
+  def images_count
+    sample_images.count
   end
 end
 

@@ -1,62 +1,14 @@
 require 'csv'
 
-class SampleImage
-  NORMALIZATION_FACTORS = {
-      factor0: {min: 0, max: 5},
-      factor1: {min: -2, max: 2},
-      factor2: {min: 0, max: 1},
-      factor3: {min: 0, max: 1},
-      factor4: {min: 0, max: 1},
-  }
-
-  attr_accessor :image_class, :filepath, :symbols_vector
-
-  def initialize(filepath, image_class)
-    self.image_class = image_class
-    self.filepath = filepath
-  end
-
-  def map_factors(symbols_list)
-    self.symbols_vector = initialize_symbols_vector(symbols_list)
-  end
-
-  def initialize_symbols_vector(symbols_list)
-    coeficient_vector = CSV.read(self.filepath, col_sep: ';').flatten.map(&:to_f)
-    create_symbols_vector(symbols_list, normalize(coeficient_vector))
-  end
-
-  def normalize(vector)
-    vector.each_with_index.map do |val, index|
-      current_factor_constants = NORMALIZATION_FACTORS["factor#{index}".to_sym]
-      (val - current_factor_constants[:min]).to_f / (current_factor_constants[:max] - current_factor_constants[:min])
-    end
-  end
-
-  def create_symbols_vector(symbols_list, normalized_vector)
-    symbols_vector = []
-    range_size = 1.to_f/symbols_list.size
-    normalized_vector.each do |coeficient|
-      symbol_index = (coeficient / range_size).to_i
-      symbols_vector << symbols_list[symbol_index]
-    end
-
-    symbols_vector
-  end
-
-end
-
 class ImageSample
 
-  def initialize(values_vector, normalization_vector)
-    self.image_class = Integer(values_vector[0])
-    self.characteristics =[]
+  def initialize(image_class, values_vector, normalization_vector=nil)
+    self.image_class = image_class
+    self.characteristics = values_vector
 
-    values_vector.each_with_index do |val, index|
-      if index > 0
-        self.characteristics << val
-      end
+    if normalization_vector
+      self.characteristics = ImageSample.normalize_vector(self.characteristics, normalization_vector)
     end
-    self.characteristics = ImageSample.normalize_vector(self.characteristics, normalization_vector)
 
     puts "created sample_image: #{self.image_class} , #{self.characteristics}"
   end
@@ -67,8 +19,7 @@ class ImageSample
     # returns rows from the csv, converted to float arrays
     rows = []
     lines = []
-    csv = CSV.read(filepath)
-    csv.each { |row| rows << row[0].split(';') }
+    rows = CSV.read(filepath)
 
     rows.each do |row|
       lines << row.map(&:to_f)
@@ -98,7 +49,7 @@ class ImageSample
     end
     puts "max values vector is #{max_columns}"
 
-    lines.each { |line| sample_images << ImageSample.new(line, max_columns) }
+    lines.each { |line| sample_images << ImageSample.new(line[0].to_i, line[1..-1], max_columns) }
     puts "loaded #{sample_images.count} images"
     sample_images
   end
@@ -113,6 +64,10 @@ class ImageSample
     puts "Class: #{self.image_class}, characteristics: #{self.characteristics}"
   end
 
+  def print_as_csv_row
+
+  end
+
   def get_characteristics
     self.characteristics
   end
@@ -121,39 +76,57 @@ class ImageSample
     self.word = word
   end
 
-  def get_word
-    self.word
-  end
 end
 
 class ImageSampleTemplate
 
-  def initialize(image_class, no_of_characteristics)
+  def initialize(image_class, no_of_characteristics, range_of_chars = 100)
     self.image_class = image_class
-    self.characteristics_range = Array.new(no_of_characteristics)
+    self.characteristics = Array.new(no_of_characteristics) { rand(range_of_chars) }
   end
 
-  attr_accessor :image_class, :characteristics_ranges
+  attr_accessor :image_class, :characteristics
+
+  def create_image_with_deviation(sigma)
+    values = []
+    characteristics.each { |char| values << char + 5*rand(sigma) } # TODO: change to gaussian
+    ImageSample.new(image_class, values)
+  end
 
   def print
-    puts image_class characteristics_ranges
+    puts image_class characteristics
   end
 end
 
 class ImageSamplesGenerator
   #factory class
 
-  def generate_image_samples(no_of_classes, no_of_characteristics = 5, no_of_objects = 20, ranges_vector = nil)
-    if not ranges_vector
-      # default max range
-      # maybe change to random vals from [0,100]
-      ranges_vector = Array.new(no_of_characteristics) { [0, 100] }
+  attr_accessor :classes
+
+  def generate_image_samples(no_of_classes, no_of_characteristics = 5, range_of_chars = 100)
+    self.classes = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, no_of_characteristics, range_of_chars) }
+  end
+
+  def generate_images(no_of_objects, sigma)
+    images = []
+
+    classes.each do |image_class|
+      no_of_objects.times do
+        images << image_class.create_image_with_deviation(sigma)
+      end
     end
-    
-    classes = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, no_of_characteristics) }
+    puts "generated #{images.size} sample images with sigma = #{sigma}"
+    images
+  end
 
-    classes.each { | | . }
+  def generate_images_csv(no_of_objects, sigma, filename = 'images.csv')
+    images = generate_images(no_of_objects, sigma)
 
+    CSV.open(filename, 'w') do |csv|
+      images.each do |image|
+        csv << [image.image_class].concat(image.characteristics)
+      end
+    end
   end
 
 
