@@ -55,7 +55,7 @@ class MyTest < Test::Unit::TestCase
     ################################################################
     #################################################################
 
-    pso =  OCR_PSO.new(symbols_list, states_count,learning_set_filepath, false)
+    pso =  OCR_PSO.new(symbols_list, states_count,learning_set_filepath)
 
     #################################################################
     ######## problem configuration ##################################
@@ -66,8 +66,8 @@ class MyTest < Test::Unit::TestCase
 
     # algorithm configuration
     vel_space = Array.new(problem_size) { |i| [-1, 1] }
-    max_gens = 1000
-    pop_size = 500
+    max_gens = 100
+    pop_size = 50
     max_vel = 100.0
     c1, c2 = 3.0, 2.0
     #####################################################################

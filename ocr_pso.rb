@@ -11,21 +11,19 @@ class OCR_PSO < Rounded_PSO
     self.symbols_list = symbols_list
 
     #init images from filepath
-    self.sample_images = adjust_images(ImageSample.create_multiple_from_csv(images_filepath),symbols_list)
+    self.sample_images = create_words_from_image_vectors(ImageSample.create_multiple_from_csv(images_filepath),symbols_list)
   end
 
   attr_accessor :symbols_list, :states_count, :dfa, :sample_images, :verbose
 
-  def adjust_images(images,symbols)
-    adjusted = []
-    intervals = symbols.count
+  def create_words_from_image_vectors(images, symbols_list)
+    range_size = 1.to_f/symbols_list.size
 
     images.each do |image|
       word = []
-      image.get_characteristics.each do |val|
-        symbols_index = ((val * intervals).to_i) + 1
-        symbol = symbols_list[symbols_index]
-        word << symbol
+      image.get_characteristics.each do |coeficient|
+        symbol_index = (coeficient / range_size).to_i
+        word << symbols_list[symbol_index]
       end
       image.set_word(word)
     end

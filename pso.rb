@@ -1,5 +1,3 @@
-require 'random_gaussian'
-
 class PSO
   def initialize(verbose=true)
     self.verbose = verbose

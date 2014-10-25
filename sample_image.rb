@@ -128,6 +128,4 @@ class ImageSamplesGenerator
       end
     end
   end
-
-
 end
