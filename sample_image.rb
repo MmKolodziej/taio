@@ -2,13 +2,11 @@ require 'csv'
 
 class ImageSample
 
-  def initialize(image_class, values_vector, normalization_vector=nil)
+  def initialize(image_class, characteristics, normalization_min_max_values=nil)
     self.image_class = image_class
-    self.characteristics = values_vector
-
-    if normalization_vector
-      self.characteristics = ImageSample.normalize_vector(self.characteristics, normalization_vector)
-    end
+    self.characteristics = normalization_min_max_values ?
+        ImageSample.normalize_vector(characteristics, normalization_min_max_values) :
+        characteristics
 
     puts "created sample_image: #{self.image_class} , #{self.characteristics}"
   end
@@ -28,35 +26,42 @@ class ImageSample
   end
 
   def self.create_multiple_from_csv(filepath)
-    #returns array of sample images for each row of the csv
+    # returns array of sample images for each row of the csv
     # TODO: add errors handling
     sample_images =[]
     lines = ImageSample.get_rows_from_csv(filepath)
 
-    # set the number of columns (dont count the first one which is the symbol's class indicator)
-    nr_of_columns = (lines[0].count) -1
-    max_columns = Array.new(nr_of_columns) { 0 }
+    # We assume that 0 is always the min value
+    normalization_min_max_values = Hash.new {|h,k| h[k] = {min: 0, max: nil}}
 
     lines.each do |line|
-      # update the max_columns vector
-      line.each_with_index do |column, index|
-        if index > 0 # the first column is the class marker
-          if max_columns[index-1] < column
-            max_columns[index-1] = column
-          end
+      # update min and max values of the column
+      line.each_with_index do |value, column_index|
+        if column_index == 0 # the first column is the class marker
+          next
+        end
+        current_col_min_max = normalization_min_max_values[column_index-1]
+
+        if !current_col_min_max[:max] || value > current_col_min_max[:max]
+          current_col_min_max[:max] = value
+        end
+
+        if !current_col_min_max[:min] || value < current_col_min_max[:min]
+          current_col_min_max[:min] = value
         end
       end
     end
-    puts "max values vector is #{max_columns}"
+    puts "Min/max values dictionary is #{normalization_min_max_values}"
 
-    lines.each { |line| sample_images << ImageSample.new(line[0].to_i, line[1..-1], max_columns) }
+    lines.each { |line| sample_images << ImageSample.new(line[0].to_i, line[1..-1], normalization_min_max_values) }
     puts "loaded #{sample_images.count} images"
     sample_images
   end
 
-  def self.normalize_vector(vector, normalization_vector)
+  def self.normalize_vector(vector, normalization_min_max_values)
     vector.each_with_index.map do |val, index|
-      val / normalization_vector[index]
+      current_min_max = normalization_min_max_values[index]
+      (val - current_min_max[:min]) / (current_min_max[:max] - current_min_max[:min])
     end
   end
 
@@ -80,16 +85,16 @@ end
 
 class ImageSampleTemplate
 
-  def initialize(image_class, no_of_characteristics, range_of_chars = 100)
-    self.image_class = image_class
-    self.characteristics = Array.new(no_of_characteristics) { rand(range_of_chars) }
-  end
-
   attr_accessor :image_class, :characteristics
+
+  def initialize(image_class, characteristics_count, characteristic_max_value = 100.0)
+    self.image_class = image_class
+    self.characteristics = Array.new(characteristics_count) { rand(characteristic_max_value) }
+  end
 
   def create_image_with_deviation(sigma)
     values = []
-    characteristics.each { |char| values << char + 5*rand(sigma) } # TODO: change to gaussian
+    characteristics.each { |val| values << val + 5*rand(sigma) } # TODO: change to gaussian
     ImageSample.new(image_class, values)
   end
 
@@ -103,8 +108,8 @@ class ImageSamplesGenerator
 
   attr_accessor :classes
 
-  def generate_image_samples(no_of_classes, no_of_characteristics = 5, range_of_chars = 100)
-    self.classes = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, no_of_characteristics, range_of_chars) }
+  def generate_image_templates(no_of_classes, characteristics_count = 5, range_of_chars = 100.0)
+    self.classes = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, characteristics_count, range_of_chars) }
   end
 
   def generate_images(no_of_objects, sigma)

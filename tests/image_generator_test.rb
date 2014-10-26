@@ -20,7 +20,7 @@ class MyTest < Test::Unit::TestCase
 
     # init image classes
     gen = ImageSamplesGenerator.new()
-    gen.generate_image_samples(no_of_classes, no_of_characteristics)
+    gen.generate_image_templates(no_of_classes, no_of_characteristics)
 
     # factory method test
     images = gen.generate_images(no_of_objects, sigma)

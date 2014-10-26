@@ -91,12 +91,6 @@ class Automata
 
   def self.generate_symbols_list(count)
     # generates a count - length array of symbols
-    symbols = []
-    i = 0
-    while i < count
-      symbols << i.to_s
-      i += 1
-    end
-    symbols
+    symbols = (0..count-1).map(&:to_s)
   end
 end
