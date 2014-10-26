@@ -1,5 +1,5 @@
 require 'test/unit'
-require_relative '../sample_image.rb'
+require_relative '../image_sample.rb'
 
 class MyTest < Test::Unit::TestCase
   def setup
@@ -19,7 +19,7 @@ class MyTest < Test::Unit::TestCase
     sigma = 0.2
 
     # init image classes
-    gen = ImageFactory.new()
+    gen = CsvImageFactory.new()
     gen.generate_image_templates(no_of_classes, no_of_characteristics)
 
     # factory method test

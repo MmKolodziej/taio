@@ -1,7 +1,7 @@
 require_relative "pso.rb"
 require_relative "automata.rb"
 
-class DFA_PSO < Rounded_PSO
+class DFA_PSO < PSO
 
   # Init in initializer.
   CORRECT_WORDS   = ['0', '1000', '101111', '1', '1010111001', '1010101010101', '111']

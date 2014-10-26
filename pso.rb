@@ -86,27 +86,6 @@ class PSO
   end
 end
 
-#PSO for integers search only. The difference between the parent class is in added rounding in some methods
-class Rounded_PSO < PSO
-  def random_vector(minmax)
-    Array.new(minmax.size) do |i|
-      random_value = minmax[i][0] + ((minmax[i][1] - minmax[i][0]) * rand()).round
-      random_value
-    end
-  end
-
-  def update_velocity(particle, gbest, max_v, c1, c2)
-    particle[:velocity].each_with_index do |v, i|
-      v1 = (c1 * rand() * (particle[:b_position][i] - particle[:position][i])).round
-      v2 = (c2 * rand() * (gbest[:position][i] - particle[:position][i])).round
-      particle[:velocity][i] = v + v1 + v2
-      particle[:velocity][i] = max_v if particle[:velocity][i] > max_v
-      particle[:velocity][i] = -max_v if particle[:velocity][i] < -max_v
-    end
-  end
-
-end
-
 # if __FILE__ == $0
 #   # problem configuration
 #   problem_size = 2

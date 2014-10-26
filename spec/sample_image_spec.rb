@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../sample_image'
+require_relative '../image_sample'
 
 describe SampleImage do
   let(:subject) { described_class.new('spec/fixtures/image_1.csv', '1') }

@@ -1,5 +1,7 @@
 require 'test/unit'
 require_relative '../ocr_pso'
+require_relative '../csv_image_factory'
+
 class MyTest < Test::Unit::TestCase
 
   def test_ocr_pso
@@ -37,7 +39,7 @@ class MyTest < Test::Unit::TestCase
     learning_set_filepath = 'learning_images.csv'
     test_set_filepath = 'test_images.csv'
     symbols_list = Automata.generate_symbols_list(4)
-    states_count = 7
+    states_count = 5
 
     #############################################################
     ######## generate the learning set ##########################
@@ -46,12 +48,11 @@ class MyTest < Test::Unit::TestCase
     no_of_characteristics = 5
     no_of_objects = 20
 
-    sigma = 0.2
+    sigma = 0.4
 
     # init image classes
-    gen = ImageFactory.new()
-    gen.generate_image_templates(no_of_classes, no_of_characteristics)
-    gen.generate_images_csv(no_of_objects, sigma, learning_set_filepath)
+    CsvImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, sigma, learning_set_filepath)
     ################################################################
     #################################################################
 
@@ -80,6 +81,4 @@ class MyTest < Test::Unit::TestCase
     #we can compute at most half of the words incorrectly
     assert_in_delta(0,best[:cost],images_count/2)
   end
-
-
 end
