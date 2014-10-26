@@ -19,11 +19,11 @@ class MyTest < Test::Unit::TestCase
     sigma = 0.2
 
     # init image classes
-    gen = ImageSamplesGenerator.new()
+    gen = ImageFactory.new()
     gen.generate_image_templates(no_of_classes, no_of_characteristics)
 
     # factory method test
-    images = gen.generate_images(no_of_objects, sigma)
+    images = gen.generate_test_images(no_of_objects, sigma)
     assert_equal(no_of_objects*no_of_classes, images.size)
 
     # csv generator functionality test

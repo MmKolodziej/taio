@@ -1,4 +1,5 @@
 require 'csv'
+require_relative 'random_gaussian'
 
 class ImageSample
 
@@ -85,39 +86,34 @@ end
 
 class ImageSampleTemplate
 
-  attr_accessor :image_class, :characteristics
+  attr_accessor :image_class, :ideal_characteristics, :characteristic_max_value
 
   def initialize(image_class, characteristics_count, characteristic_max_value = 100.0)
     self.image_class = image_class
-    self.characteristics = Array.new(characteristics_count) { rand(characteristic_max_value) }
-  end
-
-  def create_image_with_deviation(sigma)
-    values = []
-    characteristics.each { |val| values << val + 5*rand(sigma) } # TODO: change to gaussian
-    ImageSample.new(image_class, values)
+    self.characteristic_max_value = characteristic_max_value
+    self.ideal_characteristics = Array.new(characteristics_count) { rand(characteristic_max_value) }
   end
 
   def print
-    puts image_class characteristics
+    puts image_class ideal_characteristics
   end
 end
 
-class ImageSamplesGenerator
+class ImageFactory
   #factory class
 
-  attr_accessor :classes
+  attr_accessor :template_images
 
   def generate_image_templates(no_of_classes, characteristics_count = 5, range_of_chars = 100.0)
-    self.classes = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, characteristics_count, range_of_chars) }
+    self.template_images = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, characteristics_count, range_of_chars) }
   end
 
-  def generate_images(no_of_objects, sigma)
+  def generate_test_images(images_count, sigma)
     images = []
 
-    classes.each do |image_class|
-      no_of_objects.times do
-        images << image_class.create_image_with_deviation(sigma)
+    template_images.each do |template|
+      images_count.times do
+        images << create_sample_image_from_template(template, sigma)
       end
     end
     puts "generated #{images.size} sample images with sigma = #{sigma}"
@@ -125,12 +121,26 @@ class ImageSamplesGenerator
   end
 
   def generate_images_csv(no_of_objects, sigma, filename = 'images.csv')
-    images = generate_images(no_of_objects, sigma)
+    images = generate_test_images(no_of_objects, sigma)
 
     CSV.open(filename, 'w') do |csv|
       images.each do |image|
         csv << [image.image_class].concat(image.characteristics)
       end
     end
+  end
+
+  private
+
+  # randomly generates an image from template (random values are normally distributed with mean = characetristic , deviation = sigma)
+  def create_sample_image_from_template(image_template, sigma)
+    random_characteristics = image_template.ideal_characteristics.map do |val|
+      deviated = RandomGaussian.new(val, sigma).rand
+      deviated = 0.0 if deviated < 0
+      deviated = image_template.characteristic_max_value if deviated > 100
+      deviated
+    end
+    # values = image_template.ideal_characteristics.each { |val| values << val + 5*rand(sigma) }
+    ImageSample.new(image_template.image_class, random_characteristics)
   end
 end

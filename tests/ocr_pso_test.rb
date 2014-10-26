@@ -49,7 +49,7 @@ class MyTest < Test::Unit::TestCase
     sigma = 0.2
 
     # init image classes
-    gen = ImageSamplesGenerator.new()
+    gen = ImageFactory.new()
     gen.generate_image_templates(no_of_classes, no_of_characteristics)
     gen.generate_images_csv(no_of_objects, sigma, learning_set_filepath)
     ################################################################
