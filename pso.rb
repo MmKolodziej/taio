@@ -90,7 +90,8 @@ end
 class Rounded_PSO < PSO
   def random_vector(minmax)
     Array.new(minmax.size) do |i|
-      minmax[i][0] + ((minmax[i][1] - minmax[i][0]) * rand()).round
+      random_value = minmax[i][0] + ((minmax[i][1] - minmax[i][0]) * rand()).round
+      random_value
     end
   end
 

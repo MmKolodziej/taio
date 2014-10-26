@@ -65,19 +65,21 @@ class MyTest < Test::Unit::TestCase
     puts "we have #{no_of_classes} different symbols"
 
     # algorithm configuration
-    vel_space = Array.new(problem_size) { |i| [-1, 1] }
+    vel_space = Array.new(problem_size) { |i| [-3, 3] }
     max_gens = 100
     pop_size = 50
-    max_vel = 100.0
-    c1, c2 = 3.0, 2.0
+    max_vel = 2.5
+    c1, c2 = 1.5, 1.0
     #####################################################################
     #####################################################################
 
     # execute the algorithm
     best = pso.search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
-    puts "done! Solution: f=#{best[:cost]}, s=#{best[:position].inspect}"
 
+    puts "done! Solution: f=#{best[:cost]}, s=#{best[:position].map{|val| val.round }.inspect}"
     #we can compute at most half of the words incorrectly
     assert_in_delta(0,best[:cost],images_count/2)
   end
+
+
 end

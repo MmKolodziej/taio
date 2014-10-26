@@ -1,7 +1,7 @@
 require_relative'dfa_pso.rb'
 require_relative'sample_image.rb'
 
-class OCR_PSO < Rounded_PSO
+class OCR_PSO < PSO
   def initialize(symbols_list, states_count, images_filepath, verbose = true)
     self.verbose = verbose
 
@@ -33,7 +33,8 @@ class OCR_PSO < Rounded_PSO
     #let the dfa compute each of the images, and assign (dfa's end state) them to a class.
     #returns the number of images assigned to wrong class
 
-    dfa.set_transition_matrix_from_vector(vector)
+    rounded_vector = vector.map { |val| val.round }
+    dfa.set_transition_matrix_from_vector(rounded_vector)
     errors_count = 0
 
     sample_images.each do |image|
