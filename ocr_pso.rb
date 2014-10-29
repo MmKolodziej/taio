@@ -32,8 +32,7 @@ class OCR_PSO < PSO
     #let the dfa compute each of the images, and assign (dfa's end state) them to a class.
     #returns the number of images assigned to wrong class
 
-    rounded_vector = vector.map { |val| val.to_i }
-    dfa.set_transition_matrix_from_vector(rounded_vector)
+    dfa.set_transition_matrix_from_vector(vector)
     errors_count = 0
 
     sample_images.each do |image|

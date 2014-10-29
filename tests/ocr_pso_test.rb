@@ -79,24 +79,25 @@ class MyTest < Test::Unit::TestCase
     # execute the algorithm
     best = pso.search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
     rounded_best_vector = best[:position].map{|val| val.round }
-    puts "done! Solution: f=#{best[:cost]}, s=#{rounded_best_vector.inspect}"
-    # we can compute at most half of the words incorrectly
-    #assert_in_delta(0,best[:cost],images_count/2)
+    puts "done! Solution: f=#{best[:cost]}"
+    puts 'Transition matrix:'
 
     # test the test set
     a = Automata.new(symbols_list, states_count)
-    a.set_transition_matrix_from_vector(rounded_best_vector)
+    a.set_transition_matrix_from_vector(best[:position])
 
     a.print_transition_matrix
     test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
 
-    errors_count = 0.0
+    puts
+    puts 'Testing generated automata on test set...'
+    errors_count = 0
     test_set.each do |image|
       end_state = a.compute_word(image.word)
       errors_count += 1 if end_state != image.image_class
     end
     puts "Errors count #{errors_count}"
-    puts "#{(100 - errors_count*100/images_count).to_i}% of test images computed correctly!"
+    puts "#{(100.0 - errors_count*100.0/images_count)}% of test images computed correctly!"
     assert_in_delta(0, errors_count, images_count/2)
   end
 
