@@ -1,7 +1,7 @@
 class Automata
 
   #symbols_list: list of symbols that the automata can process (eg.: '0,1' , 'a,b,c' etc)
-  def initialize(symbols_list, states_count, transition_matrix)
+  def initialize(symbols_list, states_count, transition_matrix=nil)
     if (symbols_list.uniq.count != symbols_list.count)
       puts "Symbols: #{symbols_list} are not unique!"
     end
@@ -60,7 +60,7 @@ class Automata
     while row_index < symbols_list.count
       while col_index < states_count
         vector_index = row_index * states_count + col_index
-        transition_matrix[row_index][col_index] = Integer(vector[vector_index])
+        transition_matrix[row_index][col_index] = vector[vector_index].round
         col_index += 1
       end
 
@@ -91,6 +91,6 @@ class Automata
 
   def self.generate_symbols_list(count)
     # generates a count - length array of symbols
-    symbols = (0..count-1).map(&:to_s)
+    (0..count-1).map(&:to_s)
   end
 end

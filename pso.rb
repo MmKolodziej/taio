@@ -79,7 +79,7 @@ class PSO
       end
       gbest = get_global_best(pop, gbest)
       if verbose
-        puts " > gen #{gen+1}, fitness=#{gbest[:cost]}, position=#{gbest[:position]}"
+        puts " > gen #{gen+1}, fitness=#{gbest[:cost]}"#", position=#{gbest[:position]}"
       end
     end
     gbest

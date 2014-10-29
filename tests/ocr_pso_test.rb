@@ -39,7 +39,7 @@ class MyTest < Test::Unit::TestCase
     learning_set_filepath = 'learning_images.csv'
     test_set_filepath = 'test_images.csv'
     symbols_list = Automata.generate_symbols_list(4)
-    states_count = 5
+    states_count = 10
 
     #############################################################
     ######## generate the learning set ##########################
@@ -48,15 +48,17 @@ class MyTest < Test::Unit::TestCase
     no_of_characteristics = 5
     no_of_objects = 20
 
-    sigma = 0.4
+    learn_set_sigma = 0.2
+    test_set_sigma = 0.4
 
     # init image classes
     CsvImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, sigma, learning_set_filepath)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, learning_set_filepath)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, test_set_filepath)
     ################################################################
     #################################################################
 
-    pso =  OCR_PSO.new(symbols_list, states_count,learning_set_filepath)
+    pso = OCR_PSO.new(symbols_list, states_count,learning_set_filepath)
 
     #################################################################
     ######## problem configuration ##################################
@@ -67,8 +69,8 @@ class MyTest < Test::Unit::TestCase
 
     # algorithm configuration
     vel_space = Array.new(problem_size) { |i| [-3, 3] }
-    max_gens = 100
-    pop_size = 50
+    max_gens = 1000
+    pop_size = 15
     max_vel = 2.5
     c1, c2 = 1.5, 1.0
     #####################################################################
@@ -78,7 +80,24 @@ class MyTest < Test::Unit::TestCase
     best = pso.search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
 
     puts "done! Solution: f=#{best[:cost]}, s=#{best[:position].map{|val| val.round }.inspect}"
-    #we can compute at most half of the words incorrectly
-    assert_in_delta(0,best[:cost],images_count/2)
+    # we can compute at most half of the words incorrectly
+    #assert_in_delta(0,best[:cost],images_count/2)
+
+    # test the test set
+    a = Automata.new(symbols_list, states_count)
+    a.set_transition_matrix_from_vector(best[:position])
+
+    test_set = OCR_PSO.create_words_from_image_vectors(ImageSample.create_multiple_from_csv(test_set_filepath), symbols_list)
+
+    errors_count = 0.0
+    test_set.each do |image|
+      end_state = a.compute_word(image.word)
+      errors_count += 1 if end_state != image.image_class
+    end
+
+    puts "#{(100 - errors_count*100/images_count).to_i}% of test images computed correctly!"
+    assert_in_delta(0, errors_count, images_count/2)
   end
+
+
 end
