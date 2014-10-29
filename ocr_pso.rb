@@ -17,12 +17,11 @@ class OCR_PSO < PSO
   attr_accessor :symbols_list, :states_count, :dfa, :sample_images, :verbose
 
   def self.create_words_from_image_vectors(images, symbols_list)
-    range_size = 1.to_f/symbols_list.size
 
     images.each do |image|
       word = []
       image.get_characteristics.each do |coeficient|
-        symbol_index = (coeficient / range_size).to_i - 1
+        symbol_index = coeficient == 1.0 ? symbols_list.size-1 : (coeficient * symbols_list.size).to_i
         word << symbols_list[symbol_index]
       end
       image.set_word(word)

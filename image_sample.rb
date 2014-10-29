@@ -9,7 +9,7 @@ class ImageSample
         ImageSample.normalize_vector(characteristics, normalization_min_max_values) :
         characteristics
 
-    puts "created sample_image: #{self.image_class} , #{self.characteristics}"
+    #puts "created sample_image: #{self.image_class} , #{self.characteristics}"
   end
 
   attr_accessor :image_class, :characteristics, :word

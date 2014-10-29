@@ -22,7 +22,7 @@ class CsvImageFactory
         images << create_sample_image_from_template(template, sigma)
       end
     end
-    puts "generated #{images.size} sample images with sigma = #{sigma}"
+    #puts "generated #{images.size} sample images with sigma = #{sigma}"
     images
   end
 
@@ -62,10 +62,10 @@ class CsvImageFactory
         end
       end
     end
-    puts "Min/max values dictionary is #{normalization_min_max_values}"
+    #puts "Min/max values dictionary is #{normalization_min_max_values}"
 
     lines.each { |line| sample_images << ImageSample.new(line[0].to_i, line[1..-1], normalization_min_max_values) }
-    puts "loaded #{sample_images.count} images"
+    #puts "loaded #{sample_images.count} images"
     sample_images
   end
 
