@@ -87,7 +87,8 @@ class MyTest < Test::Unit::TestCase
     a = Automata.new(symbols_list, states_count)
     a.set_transition_matrix_from_vector(best[:position])
 
-    test_set = OCR_PSO.create_words_from_image_vectors(ImageSample.create_multiple_from_csv(test_set_filepath), symbols_list)
+    a.print_transition_matrix
+    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
 
     errors_count = 0.0
     test_set.each do |image|
