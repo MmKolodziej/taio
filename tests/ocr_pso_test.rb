@@ -70,7 +70,7 @@ class MyTest < Test::Unit::TestCase
     # algorithm configuration
     vel_space = Array.new(problem_size) { |i| [-3, 3] }
     max_gens = 1000
-    pop_size = 5
+    pop_size = 10
     max_vel = 2.5
     c1, c2 = 1.0, 1.0
     #####################################################################
@@ -80,7 +80,7 @@ class MyTest < Test::Unit::TestCase
     best = pso.search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
     rounded_best_vector = best[:position].map{|val| val.round }
     puts "done! Solution: f=#{best[:cost]}"
-    puts 'Transition matrix:'
+    puts 'Transition matrices'
 
     # test the test set
     a = Automata.new(symbols_list, states_count)

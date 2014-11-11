@@ -51,7 +51,8 @@ class Automata
 
   def print_transition_matrix
     symbols_list.each do |symbol|
-      puts "Transition matrix[#{symbol}] = #{transition_matrices[symbols_list.index(symbol)]}"
+      puts "Transition matrix[#{symbol}]:"
+      transition_matrices[symbols_list.index(symbol)].each { |row| puts row.inspect }
     end
   end
 
