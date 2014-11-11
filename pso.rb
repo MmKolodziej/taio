@@ -1,9 +1,16 @@
 class PSO
+  def initialize(verbose=true)
+    self.verbose = verbose
+  end
+
+  attr_accessor :verbose
+
   def objective_function(vector)
     (vector[0]-2)**2 -11
   end
 
   def random_vector(minmax)
+    # We will need some gaussian random shit here I suppose
     Array.new(minmax.size) do |i|
       minmax[i][0] + (minmax[i][1] - minmax[i][0]) * rand
     end
@@ -60,6 +67,7 @@ class PSO
   end
 
   def search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
+    puts "computing..."
     pop = Array.new(pop_size) { create_particle(search_space, vel_space) }
     gbest = get_global_best(pop)
     max_gens.times do |gen|
@@ -70,30 +78,12 @@ class PSO
         update_best_position(particle)
       end
       gbest = get_global_best(pop, gbest)
-      puts " > gen #{gen+1}, fitness=#{gbest[:cost]}, position=#{gbest[:position]}"
+      if verbose
+        puts " > gen #{gen+1}, fitness=#{gbest[:cost]}"#", position=#{gbest[:position]}"
+      end
     end
     gbest
   end
-end
-
-#PSO for integers search only. The difference between the parent class is in added rounding in some methods
-class Rounded_PSO < PSO
-  def random_vector(minmax)
-    Array.new(minmax.size) do |i|
-      minmax[i][0] + ((minmax[i][1] - minmax[i][0]) * rand()).round
-    end
-  end
-
-  def update_velocity(particle, gbest, max_v, c1, c2)
-    particle[:velocity].each_with_index do |v, i|
-      v1 = (c1 * rand() * (particle[:b_position][i] - particle[:position][i])).round
-      v2 = (c2 * rand() * (gbest[:position][i] - particle[:position][i])).round
-      particle[:velocity][i] = v + v1 + v2
-      particle[:velocity][i] = max_v if particle[:velocity][i] > max_v
-      particle[:velocity][i] = -max_v if particle[:velocity][i] < -max_v
-    end
-  end
-
 end
 
 # if __FILE__ == $0

@@ -13,6 +13,9 @@ class DFA_PSO < PSO
   end
 
   def objective_function(vector)
+
+    errors_count = 0
+    @dfa.set_transition_matrix_from_vector(vector)
     self.errors_count = 0
 
     dfa.set_transition_matrix_from_vector(vector) #TODO: implement this in automata class

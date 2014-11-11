@@ -1,7 +1,7 @@
 class Automata
 
   #symbols_list: list of symbols that the automata can process (eg.: '0,1' , 'a,b,c' etc)
-  def initialize(symbols_list, states_count, transition_matrix)
+  def initialize(symbols_list, states_count, transition_matrix=nil)
     if (symbols_list.uniq.count != symbols_list.count)
       puts "Symbols: #{symbols_list} are not unique!"
     end
@@ -28,7 +28,7 @@ class Automata
   def compute_word(word)
     return unless word_is_from_alphabet?(word)
 
-    word.each_char do |symbol|
+    word.each do |symbol|
       self.current_state = compute_symbol(symbol)
     end
 
@@ -41,7 +41,7 @@ class Automata
   end
 
   def word_is_from_alphabet?(word)
-    word.each_char do |symbol|
+    word.each do |symbol|
       return false unless symbols_list.include?(symbol)
     end
 
@@ -60,13 +60,17 @@ class Automata
     while row_index < symbols_list.count
       while col_index < states_count
         vector_index = row_index * states_count + col_index
-        transition_matrix[row_index][col_index] = Integer(vector[vector_index])
+        transition_matrix[row_index][col_index] = vector[vector_index].round
         col_index += 1
       end
 
       row_index += 1
       col_index = 0
     end
+  end
+
+  def transition_matrix_to_matrices
+    #TODO: implement
   end
 
   private
@@ -83,5 +87,10 @@ class Automata
         transition_matrix[symbols_list.index(symbol)] << 0
       end
     end
+  end
+
+  def self.generate_symbols_list(count)
+    # generates a count - length array of symbols
+    (0..count-1).map(&:to_s)
   end
 end
