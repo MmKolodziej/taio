@@ -48,8 +48,8 @@ class MyTest < Test::Unit::TestCase
     no_of_characteristics = 5
     no_of_objects = 20
 
-    learn_set_sigma = 0.2
-    test_set_sigma = 0.4
+    learn_set_sigma = 0.1
+    test_set_sigma = 0.1
 
     # init image classes
     CsvImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
@@ -72,7 +72,7 @@ class MyTest < Test::Unit::TestCase
     max_gens = 1000
     pop_size = 15
     max_vel = 2.5
-    c1, c2 = 1.5, 1.0
+    c1, c2 = 1.0, 1.0
     #####################################################################
     #####################################################################
 

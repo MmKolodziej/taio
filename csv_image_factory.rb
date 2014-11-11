@@ -12,6 +12,11 @@ class CsvImageFactory
 
   def generate_image_templates(no_of_classes, characteristics_count = 5, range_of_chars = 100.0)
     self.template_images = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, characteristics_count, range_of_chars) }
+    max_vector = Array.new(characteristics_count) {0}
+    self.template_images.each do |template|
+      template.ideal_characteristics.each_with_index { |val, index | max_vector[index] = val if max_vector[index] < val }
+    end
+    self.template_images.each { |template| template.normalize(max_vector) }
   end
 
   def generate_test_images(images_count, sigma)
@@ -78,10 +83,13 @@ class CsvImageFactory
     random_characteristics = image_template.ideal_characteristics.map do |val|
       deviated = RandomGaussian.new(val, sigma).rand
       deviated = 0.0 if deviated < 0
-      deviated = image_template.characteristic_max_value if deviated > 100
+      deviated = 1 if deviated > 1
       deviated
     end
     # values = image_template.ideal_characteristics.each { |val| values << val + 5*rand(sigma) }
     ImageSample.new(image_template.image_class, random_characteristics)
   end
 end
+
+templates = CsvImageFactory.instance.generate_image_templates(10)
+templates.each { |template| puts template.ideal_characteristics }
