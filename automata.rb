@@ -1,7 +1,8 @@
 class Automata
+# deterministic automata
 
   #symbols_list: list of symbols that the automata can process (eg.: '0,1' , 'a,b,c' etc)
-  def initialize(symbols_list, states_count, transition_matrix=nil)
+  def initialize(symbols_list, states_count, transition_matrices=nil)
     if (symbols_list.uniq.count != symbols_list.count)
       puts "Symbols: #{symbols_list} are not unique!"
     end
@@ -10,17 +11,17 @@ class Automata
     self.states_count = states_count
     self.current_state = 0
 
-    if transition_matrix
-      self.transition_matrix = transition_matrix
+    if transition_matrices
+      self.transition_matrices = transition_matrices
     else
-      init_transition_matrix
+      init_transition_matrices
     end
   end
 
   # Computes a single symbol -> changes the automata's current state to the appropriate one.
   # symbol: the symbol to be computed (eg.: '0', 'a', 'X')
   def compute_symbol(symbol)
-    transition_matrix[symbols_list.index(symbol)][current_state]
+    transition_matrices[symbols_list.index(symbol)][current_state].index {|val| val == 1}
   end
 
   # word: a list of symbols for the automata to compute (eg.: 'aabccaaa')
@@ -50,43 +51,33 @@ class Automata
 
   def print_transition_matrix
     symbols_list.each do |symbol|
-      puts "Transition matrix[#{symbol}] = #{transition_matrix[symbols_list.index(symbol)]}"
+      puts "Transition matrix[#{symbol}] = #{transition_matrices[symbols_list.index(symbol)]}"
     end
   end
 
-  def set_transition_matrix_from_vector(vector)
-    row_index, col_index = 0, 0
+  def set_transition_matrices_from_vector(vector)
+    matrix_index, row_index = 0, 0
 
-    while row_index < symbols_list.count
-      while col_index < states_count
-        vector_index = row_index * states_count + col_index
-        transition_matrix[row_index][col_index] = vector[vector_index].round
-        col_index += 1
+    while matrix_index < symbols_list.count
+      while row_index < states_count
+        vector_index = matrix_index * states_count + row_index
+        transition_matrices[matrix_index][row_index] = Array.new(states_count){0}
+        transition_matrices[matrix_index][row_index][vector[vector_index].round] = 1
+        row_index += 1
       end
 
-      row_index += 1
-      col_index = 0
+      matrix_index += 1
+      row_index = 0
     end
-  end
-
-  def transition_matrix_to_matrices
-    #TODO: implement
   end
 
   private
 
-  attr_accessor :symbols_list, :states_count, :current_state, :transition_matrix
+  attr_accessor :symbols_list, :states_count, :current_state, :transition_matrices
 
   # returns: Matrix n x m, where n = symbols count, m = states count, initialized with zeros.
-  def init_transition_matrix
-    self.transition_matrix = []
-
-    symbols_list.each do |symbol|
-      transition_matrix << []
-      states_count.times do
-        transition_matrix[symbols_list.index(symbol)] << 0
-      end
-    end
+  def init_transition_matrices
+    self.transition_matrices = Array.new(symbols_list.count){Array.new(states_count){Array.new(states_count){0}}}
   end
 
   def self.generate_symbols_list(count)

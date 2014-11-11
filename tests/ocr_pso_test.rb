@@ -70,7 +70,7 @@ class MyTest < Test::Unit::TestCase
     # algorithm configuration
     vel_space = Array.new(problem_size) { |i| [-3, 3] }
     max_gens = 1000
-    pop_size = 15
+    pop_size = 5
     max_vel = 2.5
     c1, c2 = 1.0, 1.0
     #####################################################################
@@ -84,7 +84,7 @@ class MyTest < Test::Unit::TestCase
 
     # test the test set
     a = Automata.new(symbols_list, states_count)
-    a.set_transition_matrix_from_vector(best[:position])
+    a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
     test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
