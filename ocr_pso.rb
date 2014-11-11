@@ -1,4 +1,5 @@
-require_relative'dfa_pso.rb'
+require_relative 'automata.rb'
+require_relative'pso.rb'
 require_relative'image_sample.rb'
 
 class OCR_PSO < PSO
@@ -32,7 +33,7 @@ class OCR_PSO < PSO
     #let the dfa compute each of the images, and assign (dfa's end state) them to a class.
     #returns the number of images assigned to wrong class
 
-    dfa.set_transition_matrix_from_vector(vector)
+    dfa.set_transition_matrices_from_vector(vector)
     errors_count = 0
 
     sample_images.each do |image|
