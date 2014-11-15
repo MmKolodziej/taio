@@ -3,10 +3,10 @@ require_relative'pso.rb'
 require_relative'image_sample.rb'
 
 class OCR_PSO < PSO
-  def initialize(symbols_list, states_count, images_filepath, verbose = true)
+  def initialize(symbols_list, states_count, images_filepath, rejecting_states = [], verbose = true)
     self.verbose = verbose
 
-    self.dfa = Automata.new(symbols_list, states_count, nil)
+    self.dfa = Automata.new(symbols_list, states_count, nil, rejecting_states)
 
     self.states_count = states_count
     self.symbols_list = symbols_list

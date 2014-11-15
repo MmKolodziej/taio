@@ -2,7 +2,7 @@ class Automata
 # deterministic automata
 
   #symbols_list: list of symbols that the automata can process (eg.: '0,1' , 'a,b,c' etc)
-  def initialize(symbols_list, states_count, transition_matrices=nil)
+  def initialize(symbols_list, states_count, transition_matrices=nil, rejecting_states = [])
     if (symbols_list.uniq.count != symbols_list.count)
       puts "Symbols: #{symbols_list} are not unique!"
     end
@@ -10,6 +10,7 @@ class Automata
     self.symbols_list = symbols_list
     self.states_count = states_count
     self.current_state = 0
+    self.rejecting_states = rejecting_states
 
     if transition_matrices
       self.transition_matrices = transition_matrices
@@ -34,6 +35,7 @@ class Automata
     end
 
     end_state = current_state
+    end_state = -1 if rejecting_states.include?(end_state)
 
     # reset the current_state for future computations
     self.current_state = 0
@@ -51,7 +53,8 @@ class Automata
 
   def print_transition_matrix
     symbols_list.each do |symbol|
-      puts "Transition matrix[#{symbol}] = #{transition_matrices[symbols_list.index(symbol)]}"
+      puts "Transition matrix[#{symbol}] = "
+      transition_matrices[symbols_list.index(symbol)].each { |row| puts row.inspect }
     end
   end
 
@@ -73,7 +76,7 @@ class Automata
 
   private
 
-  attr_accessor :symbols_list, :states_count, :current_state, :transition_matrices
+  attr_accessor :symbols_list, :states_count, :current_state, :transition_matrices, :rejecting_states
 
   # returns: Matrix n x m, where n = symbols count, m = states count, initialized with zeros.
   def init_transition_matrices
