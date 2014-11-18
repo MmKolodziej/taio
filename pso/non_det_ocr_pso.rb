@@ -1,12 +1,12 @@
-require_relative 'non_det_automata.rb'
-require_relative'pso.rb'
-require_relative'image_sample.rb'
+require_relative '../automata/non_deterministic_automata'
+require_relative 'pso.rb'
+require_relative '../image_sample.rb'
 
 class NON_DET_OCR_PSO < PSO
   def initialize(symbols_list, states_count, images_filepath, no_of_possible_states = 3, rejecting_states = [], verbose = true)
     self.verbose = verbose
 
-    self.ndfa = NdAutomata.new(symbols_list, states_count, nil, no_of_possible_states, rejecting_states)
+    self.ndfa = NonDeterministicAutomata.new(symbols_list, states_count, nil, no_of_possible_states, rejecting_states)
 
     self.states_count = states_count
     self.symbols_list = symbols_list

@@ -1,18 +1,16 @@
 require 'test/unit'
-require 'FileUtils'
-require_relative '../ocr_pso'
+require_relative '../pso/ocr_pso'
 require_relative '../csv_image_factory'
-require_relative '../non_det_ocr_pso'
-require_relative '../non_det_automata'
+require_relative '../pso/non_det_ocr_pso'
+require_relative '../automata/non_deterministic_automata'
 
-
-class AlienElementsTest < Test::Unit::TestCase
+class SecondPhaseTests < Test::Unit::TestCase
 
   def test_ocr_with_alien_elements
     #init the pso object
-    learning_set_filepath = 'learning_images.csv'
-    test_set_filepath = 'test_images.csv'
-    symbols_list = Automata.generate_symbols_list(4)
+    learning_set_filepath = 'test_data/learning_images.csv'
+    test_set_filepath = 'test_data/test_images.csv'
+    symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 10
 
     #############################################################
@@ -57,7 +55,7 @@ class AlienElementsTest < Test::Unit::TestCase
     puts 'Transition matrix:'
 
     # test the test set
-    a = Automata.new(symbols_list, states_count)
+    a = DeterministicAutomata.new(symbols_list, states_count)
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
@@ -77,9 +75,9 @@ class AlienElementsTest < Test::Unit::TestCase
 
   def test_ocr_with_alien_images_recognition
     #init the pso object
-    learning_set_filepath = 'learning_images.csv'
-    test_set_filepath = 'test_images.csv'
-    symbols_list = Automata.generate_symbols_list(4)
+    learning_set_filepath = 'test_data/learning_images.csv'
+    test_set_filepath = 'test_data/test_images.csv'
+    symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 10
 
     #############################################################
@@ -126,7 +124,7 @@ class AlienElementsTest < Test::Unit::TestCase
     puts 'Transition matrix:'
 
     # test the test set
-    a = Automata.new(symbols_list, states_count, nil, rejecting_states)
+    a = DeterministicAutomata.new(symbols_list, states_count, nil, rejecting_states)
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
@@ -146,9 +144,9 @@ class AlienElementsTest < Test::Unit::TestCase
 
   def test_non_deterministic_ocr
     #init the pso object
-    learning_set_filepath = 'learning_images.csv'
-    test_set_filepath = 'test_images.csv'
-    symbols_list = Automata.generate_symbols_list(4)
+    learning_set_filepath = 'test_data/learning_images.csv'
+    test_set_filepath = 'test_data/test_images.csv'
+    symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 10
 
     #############################################################
@@ -184,7 +182,7 @@ class AlienElementsTest < Test::Unit::TestCase
     # algorithm configuration
     max_vel = 0.1
     vel_space = Array.new(problem_size) { |i| [-max_vel, max_vel] }
-    max_gens = 1000
+    max_gens = 10
     pop_size = 5
     c1, c2 = 2.5, 1.0
     #####################################################################
@@ -197,7 +195,7 @@ class AlienElementsTest < Test::Unit::TestCase
     puts 'Transition matrix:'
 
     # test the test set
-    a = NdAutomata.new(symbols_list, states_count, nil, non_det_val, rejecting_states)
+    a = NonDeterministicAutomata.new(symbols_list, states_count, nil, non_det_val, rejecting_states)
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix

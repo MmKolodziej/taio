@@ -3,7 +3,7 @@ require_relative '../image_sample.rb'
 
 class MyTest < Test::Unit::TestCase
   def setup
-    self.csv_filename = 'images.csv'
+    self.csv_filename = 'test_data/images.csv'
   end
   attr_accessor :csv_filename
   def teardown

@@ -1,7 +1,7 @@
 require 'test/unit'
-require_relative '../pso.rb'
+require_relative '../pso/pso'
 
-class MyTest < Test::Unit::TestCase
+class PsoTest < Test::Unit::TestCase
 
   def test_integer_search_space
 
