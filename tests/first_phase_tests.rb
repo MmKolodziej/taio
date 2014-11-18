@@ -4,6 +4,9 @@ require_relative '../csv_image_factory'
 
 class FirstPhaseTests < Test::Unit::TestCase
 
+  LEARNING_SET_FILEPATH = 'test_data/learning_images.csv'
+  TEST_SET_FILEPATH = 'test_data/test_images.csv'
+
   def test_ocr_pso
     #init the pso object
     images_filepath = 'test_data/images_1.csv'
@@ -36,8 +39,7 @@ class FirstPhaseTests < Test::Unit::TestCase
 
   def test_ocr_from_csv
     #init the pso object
-    learning_set_filepath = 'test_data/learning_images.csv'
-    test_set_filepath = 'test_data/test_images.csv'
+
     symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 10
 
@@ -53,12 +55,12 @@ class FirstPhaseTests < Test::Unit::TestCase
 
     # init image classes
     CsvImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, learning_set_filepath)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, test_set_filepath)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, LEARNING_SET_FILEPATH)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, TEST_SET_FILEPATH)
     ################################################################
     #################################################################
 
-    pso = OCR_PSO.new(symbols_list, states_count,learning_set_filepath)
+    pso = OCR_PSO.new(symbols_list, states_count, LEARNING_SET_FILEPATH)
 
     #################################################################
     ######## problem configuration ##################################
@@ -87,7 +89,7 @@ class FirstPhaseTests < Test::Unit::TestCase
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
-    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
+    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(TEST_SET_FILEPATH), symbols_list)
 
     puts
     puts 'Testing generated automata on test set...'

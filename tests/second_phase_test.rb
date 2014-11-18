@@ -6,10 +6,11 @@ require_relative '../automata/non_deterministic_automata'
 
 class SecondPhaseTests < Test::Unit::TestCase
 
+  LEARNING_SET_FILEPATH = 'test_data/learning_images.csv'
+  TEST_SET_FILEPATH = 'test_data/test_images.csv'
+
   def test_ocr_with_alien_elements
     #init the pso object
-    learning_set_filepath = 'test_data/learning_images.csv'
-    test_set_filepath = 'test_data/test_images.csv'
     symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 10
 
@@ -25,12 +26,12 @@ class SecondPhaseTests < Test::Unit::TestCase
 
     # init image classes
     CsvImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, learning_set_filepath, no_of_objects)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, test_set_filepath, no_of_objects)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, LEARNING_SET_FILEPATH, no_of_objects)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, TEST_SET_FILEPATH, no_of_objects)
     ################################################################
     #################################################################
 
-    pso = OCR_PSO.new(symbols_list, states_count,learning_set_filepath)
+    pso = OCR_PSO.new(symbols_list, states_count,LEARNING_SET_FILEPATH)
 
     #################################################################
     ######## problem configuration ##################################
@@ -59,7 +60,7 @@ class SecondPhaseTests < Test::Unit::TestCase
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
-    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
+    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(TEST_SET_FILEPATH), symbols_list)
 
     puts
     puts 'Testing generated automata on test set...'
@@ -75,8 +76,6 @@ class SecondPhaseTests < Test::Unit::TestCase
 
   def test_ocr_with_alien_images_recognition
     #init the pso object
-    learning_set_filepath = 'test_data/learning_images.csv'
-    test_set_filepath = 'test_data/test_images.csv'
     symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 10
 
@@ -92,14 +91,14 @@ class SecondPhaseTests < Test::Unit::TestCase
 
     # init image classes
     CsvImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, learning_set_filepath, no_of_objects)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, test_set_filepath, no_of_objects)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, LEARNING_SET_FILEPATH, no_of_objects)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, TEST_SET_FILEPATH, no_of_objects)
     ################################################################
     #################################################################
     states_count += 1
     rejecting_states = [states_count]
 
-    pso = OCR_PSO.new(symbols_list, states_count,learning_set_filepath, rejecting_states)
+    pso = OCR_PSO.new(symbols_list, states_count,LEARNING_SET_FILEPATH, rejecting_states)
 
     #################################################################
     ######## problem configuration ##################################
@@ -128,7 +127,7 @@ class SecondPhaseTests < Test::Unit::TestCase
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
-    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
+    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(TEST_SET_FILEPATH), symbols_list)
 
     puts
     puts 'Testing generated automata on test set...'
@@ -144,8 +143,6 @@ class SecondPhaseTests < Test::Unit::TestCase
 
   def test_non_deterministic_ocr
     #init the pso object
-    learning_set_filepath = 'test_data/learning_images.csv'
-    test_set_filepath = 'test_data/test_images.csv'
     symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 10
 
@@ -163,14 +160,14 @@ class SecondPhaseTests < Test::Unit::TestCase
 
     # init image classes
     CsvImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, learning_set_filepath)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, test_set_filepath)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, LEARNING_SET_FILEPATH)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, TEST_SET_FILEPATH)
     ################################################################
     #################################################################
     rejecting_states = []
     states_count += rejecting_states.count
 
-    pso = NON_DET_OCR_PSO.new(symbols_list, states_count,learning_set_filepath, non_det_val, rejecting_states)
+    pso = NON_DET_OCR_PSO.new(symbols_list, states_count,LEARNING_SET_FILEPATH, non_det_val, rejecting_states)
 
     #################################################################
     ######## problem configuration ##################################
@@ -199,7 +196,7 @@ class SecondPhaseTests < Test::Unit::TestCase
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
-    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
+    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(TEST_SET_FILEPATH), symbols_list)
 
     puts
     puts 'Testing generated automata on test set...'
