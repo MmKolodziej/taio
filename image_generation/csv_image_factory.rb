@@ -1,5 +1,5 @@
 require_relative 'sample_image_template'
-require_relative 'random_gaussian'
+require_relative '../helpers/random_gaussian'
 require_relative 'image_sample'
 
 # Generates, loads and saves images from and to CSV

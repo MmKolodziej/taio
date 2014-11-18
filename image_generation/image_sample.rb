@@ -1,5 +1,5 @@
 require 'csv'
-require_relative 'random_gaussian'
+require_relative '../helpers/random_gaussian'
 
 class ImageSample
 

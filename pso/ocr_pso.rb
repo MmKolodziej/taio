@@ -1,6 +1,6 @@
 require_relative '../automata/deterministic_automata'
 require_relative 'pso.rb'
-require_relative '../image_sample'
+require_relative '../image_generation/image_sample'
 
 class OCR_PSO < PSO
   def initialize(symbols_list, states_count, images_filepath, rejecting_states = [], verbose = true)

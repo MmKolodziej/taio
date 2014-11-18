@@ -1,5 +1,5 @@
-require_relative "pso.rb"
-require_relative "deterministic_automata.rb"
+require_relative 'pso.rb'
+require_relative '../automata/deterministic_automata'
 
 class DFA_PSO < PSO
 

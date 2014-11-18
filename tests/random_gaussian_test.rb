@@ -1,5 +1,5 @@
 require 'test/unit'
-require_relative '../random_gaussian'
+require_relative '../helpers/random_gaussian'
 
 class RandomGaussianTest < Test::Unit::TestCase
   def test_random

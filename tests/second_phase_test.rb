@@ -1,6 +1,6 @@
 require 'test/unit'
 require_relative '../pso/ocr_pso'
-require_relative '../csv_image_factory'
+require_relative '../image_generation/csv_image_factory'
 require_relative '../pso/non_det_ocr_pso'
 require_relative '../automata/non_deterministic_automata'
 
@@ -179,7 +179,7 @@ class SecondPhaseTests < Test::Unit::TestCase
     # algorithm configuration
     max_vel = 0.1
     vel_space = Array.new(problem_size) { |i| [-max_vel, max_vel] }
-    max_gens = 10
+    max_gens = 1000
     pop_size = 5
     c1, c2 = 2.5, 1.0
     #####################################################################

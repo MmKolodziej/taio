@@ -1,6 +1,6 @@
 require 'test/unit'
 require_relative '../pso/ocr_pso'
-require_relative '../csv_image_factory'
+require_relative '../image_generation/csv_image_factory'
 
 class FirstPhaseTests < Test::Unit::TestCase
 
@@ -24,7 +24,7 @@ class FirstPhaseTests < Test::Unit::TestCase
 
     # algorithm configuration
     vel_space = Array.new(problem_size) { |i| [-1, 1] }
-    max_gens = 10
+    max_gens = 1000
     pop_size = 800
     max_vel = 100.0
     c1, c2 = 3.0, 1.0
@@ -71,7 +71,7 @@ class FirstPhaseTests < Test::Unit::TestCase
 
     # algorithm configuration
     vel_space = Array.new(problem_size) { |i| [-3, 3] }
-    max_gens = 10
+    max_gens = 1000
     pop_size = 5
     max_vel = 2.5
     c1, c2 = 1.0, 1.0
