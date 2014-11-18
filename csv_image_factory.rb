@@ -1,16 +1,19 @@
 require_relative 'sample_image_template'
+require_relative 'random_gaussian'
+require_relative 'image_sample'
 
 # Generates, loads and saves images from and to CSV
 class CsvImageFactory
   @@instance = CsvImageFactory.new
 
-  attr_accessor :template_images
+  attr_accessor :template_images, :characteristics_count, :range
 
   def self.instance
     return @@instance
   end
 
   def generate_image_templates(no_of_classes, characteristics_count = 5, range_of_chars = 100.0)
+    self.characteristics_count = characteristics_count
     self.template_images = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, characteristics_count, range_of_chars) }
     max_vector = Array.new(characteristics_count) {0}
     self.template_images.each do |template|
@@ -31,8 +34,9 @@ class CsvImageFactory
     images
   end
 
-  def generate_images_csv(no_of_objects, sigma, filename = 'images.csv')
+  def generate_images_csv(no_of_objects, sigma, filename = 'images.csv', no_of_alien_elements = 0)
     images = generate_test_images(no_of_objects, sigma)
+    images.concat(generate_alien_elements(no_of_alien_elements))
 
     CSV.open(filename, 'w') do |csv|
       images.each do |image|
@@ -89,7 +93,13 @@ class CsvImageFactory
     # values = image_template.ideal_characteristics.each { |val| values << val + 5*rand(sigma) }
     ImageSample.new(image_template.image_class, random_characteristics)
   end
-end
 
-templates = CsvImageFactory.instance.generate_image_templates(10)
-templates.each { |template| puts template.ideal_characteristics }
+  def generate_alien_elements(no_of_elements)
+    alien_elements = []
+
+    no_of_elements.times do
+      alien_elements << ImageSample.new(ImageSample::ALIEN_ELEMENTS_CLASS, Array.new(characteristics_count){rand})
+    end
+    alien_elements
+  end
+end
