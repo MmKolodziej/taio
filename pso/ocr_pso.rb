@@ -1,18 +1,18 @@
-require_relative 'automata.rb'
-require_relative'pso.rb'
-require_relative'image_sample.rb'
+require_relative '../automata/deterministic_automata'
+require_relative 'pso.rb'
+require_relative '../image_generation/image_sample'
 
-class OCR_PSO < PSO
+class OcrPso < PSO
   def initialize(symbols_list, states_count, images_filepath, rejecting_states = [], verbose = true)
     self.verbose = verbose
 
-    self.dfa = Automata.new(symbols_list, states_count, nil, rejecting_states)
+    self.dfa = DeterministicAutomata.new(symbols_list, states_count, nil, rejecting_states)
 
     self.states_count = states_count
     self.symbols_list = symbols_list
 
     #init images from filepath
-    self.sample_images = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list)
+    self.sample_images = OcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list)
   end
 
   attr_accessor :symbols_list, :states_count, :dfa, :sample_images, :verbose
@@ -54,6 +54,11 @@ class OCR_PSO < PSO
   def images_count
     sample_images.count
   end
+
+  def print_progress(gen, fitness)
+    puts "> gen #{gen+1}, errors count: #{fitness} (#{((fitness.to_f/sample_images.count)*100.0).round}%)"
+  end
+
 end
 
 

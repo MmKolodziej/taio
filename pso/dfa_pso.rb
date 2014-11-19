@@ -1,5 +1,5 @@
-require_relative "pso.rb"
-require_relative "automata.rb"
+require_relative 'pso.rb'
+require_relative '../automata/deterministic_automata'
 
 class DFA_PSO < PSO
 
@@ -9,7 +9,7 @@ class DFA_PSO < PSO
 
   def initialize(symbols_list, states_count, accepting_states)
     self.accepting_states = accepting_states
-    self.dfa = Automata.new(symbols_list, states_count, nil)
+    self.dfa = DeterministicAutomata.new(symbols_list, states_count, nil)
   end
 
   def objective_function(vector)

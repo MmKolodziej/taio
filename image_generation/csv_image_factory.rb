@@ -1,5 +1,5 @@
 require_relative 'sample_image_template'
-require_relative 'random_gaussian'
+require_relative '../helpers/random_gaussian'
 require_relative 'image_sample'
 
 # Generates, loads and saves images from and to CSV
@@ -36,7 +36,7 @@ class CsvImageFactory
 
   def generate_images_csv(no_of_objects, sigma, filename = 'images.csv', no_of_alien_elements = 0)
     images = generate_test_images(no_of_objects, sigma)
-    images.concat(generate_alien_elements(no_of_alien_elements))
+    images.concat(generate_foreign_elements(no_of_alien_elements))
 
     CSV.open(filename, 'w') do |csv|
       images.each do |image|
@@ -94,12 +94,12 @@ class CsvImageFactory
     ImageSample.new(image_template.image_class, random_characteristics)
   end
 
-  def generate_alien_elements(no_of_elements)
-    alien_elements = []
+  def generate_foreign_elements(no_of_elements)
+    foreign_elements = []
 
     no_of_elements.times do
-      alien_elements << ImageSample.new(ImageSample::ALIEN_ELEMENTS_CLASS, Array.new(characteristics_count){rand})
+      foreign_elements << ImageSample.new(ImageSample::FOREIGN_ELEMENTS_CLASS, Array.new(characteristics_count){rand})
     end
-    alien_elements
+    foreign_elements
   end
 end

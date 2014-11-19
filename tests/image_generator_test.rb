@@ -1,9 +1,9 @@
 require 'test/unit'
-require_relative '../image_sample.rb'
+require_relative '../image_generation/image_sample'
 
-class MyTest < Test::Unit::TestCase
+class ImageGeneratorTest < Test::Unit::TestCase
   def setup
-    self.csv_filename = 'images.csv'
+    self.csv_filename = 'test_data/images.csv'
   end
   attr_accessor :csv_filename
   def teardown

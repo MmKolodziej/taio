@@ -1,16 +1,19 @@
 require 'test/unit'
-require_relative '../ocr_pso'
-require_relative '../csv_image_factory'
+require_relative '../pso/ocr_pso'
+require_relative '../image_generation/csv_image_factory'
 
-class MyTest < Test::Unit::TestCase
+class FirstPhaseTests < Test::Unit::TestCase
+
+  LEARNING_SET_FILEPATH = 'test_data/learning_images.csv'
+  TEST_SET_FILEPATH = 'test_data/test_images.csv'
 
   def test_ocr_pso
     #init the pso object
-    images_filepath = 'images_1.csv'
-    symbols_list = Automata.generate_symbols_list(4)
+    images_filepath = 'test_data/images_1.csv'
+    symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 7
 
-    pso =  OCR_PSO.new(symbols_list, states_count,images_filepath, false)
+    pso =  OcrPso.new(symbols_list, states_count,images_filepath, false)
 
     # problem configuration
     problem_size = states_count * symbols_list.count
@@ -21,7 +24,7 @@ class MyTest < Test::Unit::TestCase
 
     # algorithm configuration
     vel_space = Array.new(problem_size) { |i| [-1, 1] }
-    max_gens = 100
+    max_gens = 1000
     pop_size = 800
     max_vel = 100.0
     c1, c2 = 3.0, 1.0
@@ -36,9 +39,8 @@ class MyTest < Test::Unit::TestCase
 
   def test_ocr_from_csv
     #init the pso object
-    learning_set_filepath = 'learning_images.csv'
-    test_set_filepath = 'test_images.csv'
-    symbols_list = Automata.generate_symbols_list(4)
+
+    symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 10
 
     #############################################################
@@ -53,12 +55,12 @@ class MyTest < Test::Unit::TestCase
 
     # init image classes
     CsvImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, learning_set_filepath)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, test_set_filepath)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, LEARNING_SET_FILEPATH)
+    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, TEST_SET_FILEPATH)
     ################################################################
     #################################################################
 
-    pso = OCR_PSO.new(symbols_list, states_count,learning_set_filepath)
+    pso = OcrPso.new(symbols_list, states_count, LEARNING_SET_FILEPATH)
 
     #################################################################
     ######## problem configuration ##################################
@@ -83,11 +85,11 @@ class MyTest < Test::Unit::TestCase
     puts 'Transition matrix:'
 
     # test the test set
-    a = Automata.new(symbols_list, states_count)
+    a = DeterministicAutomata.new(symbols_list, states_count)
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
-    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
+    test_set = OcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(TEST_SET_FILEPATH), symbols_list)
 
     puts
     puts 'Testing generated automata on test set...'
@@ -100,6 +102,4 @@ class MyTest < Test::Unit::TestCase
     puts "#{(100.0 - errors_count*100.0/images_count)}% of test images computed correctly!"
     assert_in_delta(0, errors_count, images_count/2)
   end
-
-
 end
