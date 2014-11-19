@@ -78,26 +78,12 @@ class PSO
         update_best_position(particle)
       end
       gbest = get_global_best(pop, gbest)
-      if verbose
-        puts " > gen #{gen+1}, fitness=#{gbest[:cost]}"#", position=#{gbest[:position]}"
-      end
+      print_progress(gen+1, gbest[:cost]) if verbose
     end
     gbest
   end
-end
 
-# if __FILE__ == $0
-#   # problem configuration
-#   problem_size = 2
-#   search_space = Array.new(problem_size) { |i| [-5, 5] }
-#   # algorithm configuration
-#   vel_space = Array.new(problem_size) { |i| [-1, 1] }
-#   max_gens = 100
-#   pop_size = 50
-#   max_vel = 100.0
-#   c1, c2 = 2.0, 2.0
-#   # execute the algorithm
-#   pso = Rounded_PSO.new()
-#   best = pso.search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
-#   puts "done! Solution: f=#{best[:cost]}, s=#{best[:position].inspect}"
-# end
+  def print_progress(gen, fitness)
+    puts "> gen #{gen+1}, errors count: #{fitness}"
+  end
+end

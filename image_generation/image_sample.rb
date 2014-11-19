@@ -3,7 +3,7 @@ require_relative '../helpers/random_gaussian'
 
 class ImageSample
 
-  ALIEN_ELEMENTS_CLASS = -1
+  FOREIGN_ELEMENTS_CLASS = -1
   def initialize(image_class, characteristics, normalization_min_max_values=nil)
     self.image_class = image_class
     self.characteristics = normalization_min_max_values ?
@@ -34,8 +34,8 @@ class ImageSample
     self.characteristics
   end
 
-  def self.get_alien_elements_class
-    ALIEN_ELEMENTS_CLASS
+  def self.get_foreign_elements_class
+    FOREIGN_ELEMENTS_CLASS
   end
 
   def set_word(word)

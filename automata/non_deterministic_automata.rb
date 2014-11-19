@@ -43,6 +43,10 @@ class NonDeterministicAutomata < BaseAutomata
     end
   end
 
+  def is_in_rejecting_state?
+    rejecting_states.each { |state| return true if current_states[state] == 1 }
+  end
+
   private
 
   attr_accessor :current_states, :possible_states_count

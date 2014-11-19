@@ -13,7 +13,7 @@ class FirstPhaseTests < Test::Unit::TestCase
     symbols_list = DeterministicAutomata.generate_symbols_list(4)
     states_count = 7
 
-    pso =  OCR_PSO.new(symbols_list, states_count,images_filepath, false)
+    pso =  OcrPso.new(symbols_list, states_count,images_filepath, false)
 
     # problem configuration
     problem_size = states_count * symbols_list.count
@@ -60,7 +60,7 @@ class FirstPhaseTests < Test::Unit::TestCase
     ################################################################
     #################################################################
 
-    pso = OCR_PSO.new(symbols_list, states_count, LEARNING_SET_FILEPATH)
+    pso = OcrPso.new(symbols_list, states_count, LEARNING_SET_FILEPATH)
 
     #################################################################
     ######## problem configuration ##################################
@@ -89,7 +89,7 @@ class FirstPhaseTests < Test::Unit::TestCase
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
-    test_set = OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(TEST_SET_FILEPATH), symbols_list)
+    test_set = OcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(TEST_SET_FILEPATH), symbols_list)
 
     puts
     puts 'Testing generated automata on test set...'

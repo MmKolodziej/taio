@@ -1,8 +1,9 @@
 require_relative '../automata/non_deterministic_automata'
 require_relative 'pso.rb'
 require_relative '../image_generation/image_sample'
+require_relative 'ocr_pso'
 
-class NON_DET_OCR_PSO < PSO
+class NonDetOcrPso < OcrPso
   def initialize(symbols_list, states_count, images_filepath, no_of_possible_states = 3, rejecting_states = [], verbose = true)
     self.verbose = verbose
 
@@ -12,7 +13,7 @@ class NON_DET_OCR_PSO < PSO
     self.symbols_list = symbols_list
 
     #init images from filepath
-    self.sample_images = NON_DET_OCR_PSO.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list)
+    self.sample_images = NonDetOcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list)
   end
 
   attr_accessor :symbols_list, :states_count, :ndfa, :sample_images, :verbose
@@ -39,9 +40,7 @@ class NON_DET_OCR_PSO < PSO
     sample_images.each do |image|
       end_states = ndfa.compute_word(image.word)
       if image.image_class == -1
-        alien_error = 1
-        ndfa.rejecting_states.each {|state| alien_error = 0 if end_states[state] == 1}
-        errors_count += alien_error
+        errors_count += 1 if not ndfa.is_in_rejecting_state?
       else if not end_states[image.image_class] == 1
         errors_count += 1
            end
