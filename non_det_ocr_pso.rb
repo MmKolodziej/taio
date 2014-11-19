@@ -39,9 +39,7 @@ class NON_DET_OCR_PSO < PSO
     sample_images.each do |image|
       end_states = ndfa.compute_word(image.word)
       if image.image_class == -1
-        alien_error = 1
-        ndfa.rejecting_states.each {|state| alien_error = 0 if end_states[state] == 1}
-        errors_count += alien_error
+        errors_count += 1 if not ndfa.is_in_rejecting_state?
       else if not end_states[image.image_class] == 1
         errors_count += 1
            end

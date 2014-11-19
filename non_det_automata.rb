@@ -77,9 +77,17 @@ class NdAutomata
     end
   end
 
+
+  def is_in_rejecting_state?
+    rejecting_states.each do |state|
+      return true if current_states[state] == 1
+    end
+  end
+
   private
 
   attr_accessor :symbols_list, :states_count, :current_states, :transition_matrices, :rejecting_states, :possible_states_count
+
 
   def reset_current_states
     states = Array.new(states_count){0}
