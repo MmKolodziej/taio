@@ -47,15 +47,37 @@ class NonDeterministicAutomata < BaseAutomata
     rejecting_states.each { |state| return true if current_states[state] == 1 }
   end
 
-  private
-
-  attr_accessor :current_states, :possible_states_count
 
   def reset_current_states
     states = Array.new(states_count){0}
     states[0] = 1
     states
   end
+
+
+  # Computes a single symbol -> changes the automata's current state to the appropriate one.
+  # symbol: the symbol to be computed (eg.: '0', 'a', 'X')
+  def compute_symbol(symbol)
+    matrix = transition_matrices[symbols_list.index(symbol)]
+    states = multiply_matrix_by_vector(matrix, current_states)
+    limit_states(states)
+  end
+
+  def limit_states(states_vector)
+    #sorted_indexes contains indexes of sorted elements of the states_vector
+    sorted_indexes = states_vector.each_with_index.sort.map(&:last)
+    limited_states_vector = Array.new(states_count){0}
+    # we take only the top 'possible_states_count' states
+    sorted_indexes.last(possible_states_count).each do |index|
+      limited_states_vector[index] = 1
+    end
+    limited_states_vector
+  end
+
+  private
+
+  attr_accessor :current_states, :possible_states_count
+
 
   def multiply_matrix_by_vector(matrix, vector)
     # the idea is, if we can go to state x from 3 different states
@@ -71,23 +93,4 @@ class NonDeterministicAutomata < BaseAutomata
     result
   end
 
-  def limit_states(states_vector)
-    #sorted_indexes contains indexes of sorted elements of the states_vector
-    sorted_indexes = states_vector.each_with_index.sort.map(&:last)
-
-    limited_states_vector = Array.new(states_count){0}
-    # we take only the top 'possible_states_count' states
-    sorted_indexes.last(possible_states_count).each do |index|
-      limited_states_vector[index] = 1
-    end
-    limited_states_vector
-  end
-
-  # Computes a single symbol -> changes the automata's current state to the appropriate one.
-  # symbol: the symbol to be computed (eg.: '0', 'a', 'X')
-  def compute_symbol(symbol)
-    matrix = transition_matrices[symbols_list.index(symbol)]
-    states = multiply_matrix_by_vector(matrix, current_states)
-    limit_states(states)
-  end
 end
