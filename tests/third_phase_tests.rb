@@ -43,17 +43,16 @@ class ThirdPhaseTests < Test::Unit::TestCase
     puts "we have #{no_of_classes} different symbols"
 
     # algorithm configuration
-    max_vel = 0.15
+    max_vel = 0.25
     vel_space = Array.new(problem_size) { |i| [-max_vel, max_vel] }
-    max_gens = 1000
+    max_gens = 10000
     pop_size = 5
-    c1, c2 = 1.5, 1.0
+    c1, c2 = 1.0, 1.0
     #####################################################################
     #####################################################################
 
     # execute the algorithm
     best = pso.search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
-    rounded_best_vector = best[:position].map { |val| val.round }
     puts "done! Solution: f=#{best[:cost]}"
     puts 'Transition matrix:'
 
