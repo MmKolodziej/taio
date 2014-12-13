@@ -3,7 +3,7 @@ require_relative 'pso.rb'
 require_relative '../image_generation/image_sample'
 
 class OcrPso < PSO
-  def initialize(symbols_list, states_count, images_filepath, rejecting_states = [], verbose = true)
+  def initialize(symbols_list, states_count, images_filepath, rejecting_states = [], verbose = true, skip_duplicates = false)
     self.verbose = verbose
 
     self.automata = DeterministicAutomata.new(symbols_list, states_count, nil, rejecting_states)
@@ -12,12 +12,12 @@ class OcrPso < PSO
     self.symbols_list = symbols_list
 
     #init images from filepath
-    self.sample_images = OcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list)
+    self.sample_images = OcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list, skip_duplicates)
   end
 
   attr_accessor :symbols_list, :states_count, :automata, :sample_images, :verbose
 
-  def self.create_words_from_image_vectors(images, symbols_list)
+  def self.create_words_from_image_vectors(images, symbols_list, skip_duplicates = false)
 
     images.each do |image|
       word = []
@@ -27,6 +27,13 @@ class OcrPso < PSO
       end
       image.set_word(word)
     end
+
+    if skip_duplicates
+      puts "skipping"
+      images.uniq! {|image| image.word }
+    end
+
+    images
   end
 
   def objective_function(vector)
@@ -56,12 +63,9 @@ class OcrPso < PSO
     sample_images.count
   end
 
-  def print_progress(gen, fitness)
-    puts "> gen #{gen+1}, errors count: #{fitness} (#{((fitness.to_f/sample_images.count)*100.0).round}%)"
+  def print_progress(gen, fitness, iterations_wo_change)
+    puts "> gen #{gen+1}, errors count: #{fitness} (#{((fitness.to_f/sample_images.count)*100.0).round}%), iterations without change: #{iterations_wo_change}"
   end
 
 end
-
-
-
 

@@ -1,0 +1,100 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1343\cocoasubrtf160
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\margb1417\margt1417\vieww12200\viewh17140\viewkind1
+\deftab720
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\ri0
+
+\f0\fs24 \cf0 TAIO2014 -etap <e> -wejscieTyp <w> -sciezkaTrain <str> -sciezkaTest <ste>  -sciezkaOutputKlas <out> -sciezkaOutputErr <outerr> -iloscKlas <ilk> -iloscCech <ich> -iloscPowtorzenWKlasie <ilewkl> -minLos <minlos> -maxLos <maxlos> - zaburzenie <zab> -procRozmTest <procte> -procRozmObce <obce> -procRozmZaburz <zaburz> -dyskretyzacja <dysk> -ograniczNietermin <ogranicz> -rownolegle <row> -PSOiter <iter> -PSOs <swarmsize> -PSOk <informants> -PSOp <percinformants> -PSO \'85. dalsze argumenty dla PSO, poni\uc0\u380 ej wyja\u347 nienie jakie\
+\
+Poni\uc0\u380 ej znajduje si\u281  wyja\u347 nienie powy\u380 szej listy parametr\'f3w oraz dozwolone warto\u347 ci. \
+\
+etap <e>, mo\uc0\u380 liwe warto\u347 ci:\
+a1 - automat deterministyczny bez element\'f3w obcych\
+a2 - automat deterministyczny z elementami obcymi\
+a3 - automat niedeterministyczny bez element\'f3w obcych \
+a4 - automat niedeterministyczny z elementami obcymi\
+a5 - automat rozmyty bez element\'f3w obcych \
+a6 - automat rozmyty z elementami obcymi\
+\
+Parametr obowi\uc0\u261 zkowy. Typ automatu ma by\u263  wypisany na konsoli (lub okienku). \
+\
+wejscieTyp <w>\
+Mo\uc0\u380 liwe warto\u347 ci dla parametru to:\
+gen - dane generowane sztucznie w trakcie uruchomienia programu\
+czyt - dane czytane z ustalonej lokalizacji\
+Parametr nieobowi\uc0\u261 zkowy. \
+\
+sciezkaTrain <str>\
+\uc0\u346 cie\u380 ka do danych treningowych pisana w cudzys\u322 owie, np. \'93/moja/sciezka/train.xlsx\'94\
+Parametr obowi\uc0\u261 zkowy je\u347 li wejscieTyp to czyt. Parametr nie mo\u380 e wyst\u261 pi\u263 , je\u347 li wejscieTyp to gen. \
+\
+sciezkaTest <ste>\
+\uc0\u346 cie\u380 ka do danych testowych pisana w cudzys\u322 owie, np. \'93/moja/sciezka/test.xlsx\'94\
+Parametr ten nie mo\uc0\u380 e wyst\u261 pi\u263 , je\u347 li wejscieTyp to gen. Parametr nie mo\u380 e wyst\u261 pi\u263 , je\u347 li wyst\u281 puje procRozmTest. \
+\
+sciezkaObceTrain <str>\
+\uc0\u346 cie\u380 ka do danych treningowych z wy\u322 \u261 cznie elementami obcymi pisana w cudzys\u322 owie, np. \'93/moja/sciezka/train_obce.xlsx\'94\
+Parametr nie mo\uc0\u380 e wyst\u261 pi\u263 , je\u347 li wejscieTyp to gen. Je\u347 li automat ma rozpoznawa\u263  elementy obce musi by\u263  podany przynajmniej jeden spos\'f3b ich pozyskania do uczenia.\
+\
+sciezkaObceTest <str>\
+\uc0\u346 cie\u380 ka do danych testowych z wy\u322 \u261 cznie elementami obcymi pisana w cudzys\u322 owie, np. \'93/moja/sciezka/test_obce.xlsx\'94\
+Parametr nieobowi\uc0\u261 zkowy. Parametr nie mo\u380 e wyst\u261 pi\u263 , je\u347 li wejscieTyp to gen..\
+\
+\
+sciezkaOutputKlas <out>\
+\uc0\u346 cie\u380 ka do pliku z wynikiem klasyfikacji pisana w cudzys\u322 owie, np. \'93/moja/sciezka/wynik.xlsx\'94. Parametr nieobowi\u261 zkowy. Wynik klasyfikacji to plik zawieraj\u261 cy jedn\u261  kolumn\u281  znak\'f3w-element\'f3w rozpoznanych. Uwaga: co z tego wynika: dla wszystkich metod klasyfikacji nale\u380 y zaproponowa\u263  nawet najbardziej prost\u261  metod\u281  uzyskania pojedynczej nierozmytej warto\u347 ci predykowanej.\
+\
+sciezkaOutputErr <outerr>\
+\uc0\u346 cie\u380 ka do pliku z dodatkowymi informacjami o wyniku klasyfikacji pisana w cudzys\u322 owie, np. \'93/moja/sciezka/wynik_bledy.xlsx\'94. Parametr nieobowi\u261 zkowy. Dodatkowy plik ma by\u263  w formacie xlsx i mo\u380 e zawiera\u263  dodatkowe informacje o procesie klasyfikacji, w szczeg\'f3lno\u347 ci i przynajmniej b\u322 \u261 d na zbiorze treningowym wyra\u380 ony jako stosunek niepoprawnie zaklasyfikowanych element\'f3w do ca\u322 o\u347 ci zbioru ucz\u261 cego. B\u322 \u261 d na zbiorze treningowym ma by\u263  na pierwszej pozycji w pliku dodatkowym. Poza tym plik mo\u380 e zawiera\u263  inne statystyki odno\u347 nie b\u322 \u281 du, np. b\u322 \u261 d na zbiorze testowym, TPR, FPR. Ponadto, informacja o b\u322 \u281 dzie musi by\u263  wypisywana do konsoli/okienka Waszych program\'f3w. \
+\
+iloscKlas <ilk> \
+ilo\uc0\u347 \u263  klas - argument w\u322 a\u347 ciwy tylko dla uruchomienia wymagaj\u261 cego wygenerowania danych - liczba naturalna wi\u281 ksza od 1\
+Parametr nie mo\uc0\u380 e wyst\u261 pi\u263 , je\u347 li wejscieTyp to czyt.\
+\
+iloscCech <ich> \
+ilo\uc0\u347 \u263  cech - argument w\u322 a\u347 ciwy tylko dla uruchomienia wymagaj\u261 cego wygenerowania danych - liczba naturalna wi\u281 ksza od 0\
+Parametr nie mo\uc0\u380 e wyst\u261 pi\u263 , je\u347 li wejscieTyp to czyt.\
+\
+iloscPowtorzenWKlasie <ilewkl>\
+Ile instancji nale\uc0\u380 y wygenerowa\u263  dla ka\u380 dej z klasy - argument w\u322 a\u347 ciwy tylko dla uruchomienia wymagaj\u261 cego wygenerowania danych - liczba naturalna wi\u281 ksza od 0. Parametr nie mo\u380 e wyst\u261 pi\u263 , je\u347 li wejscieTyp to czyt.\
+\
+minLos <minlos> \
+maxLos <maxlos> \
+Minimalna i maksymalna warto\uc0\u347 \u263 , kt\'f3ra mo\u380 e wyst\u261 pi\u263  w generowanym wektorze z wzorcowymi cechami dla klas- liczby rzeczywiste minLos<=maxLos. Parametr nie mo\u380 e wyst\u261 pi\u263 , je\u347 li wejscieTyp to czyt.\
+\
+zaburzenie <zab> \
+Zaburzenie dla zreplikowanych instancji klas - argument w\uc0\u322 a\u347 ciwy tylko dla uruchomienia wymagaj\u261 cego wygenerowania danych - liczba rzeczywista. Parametr nie mo\u380 e wyst\u261 pi\u263 , je\u347 li wejscieTyp to czyt.\
+\
+procRozmTest <procte> \
+Rozmiar zbioru testowego wyra\uc0\u380 ony jako proporcja, np. procRozmTest=20 oznacza, \u380 e z wygenerowanego zboru treningowego uzyskujemy 80% danych treningowych i 20% danych testowych, dane-rekordy testowe s\u261  losowane, w testach na zbudowanie najlepszego klasyfikatora mo\u380 na zastosowa\u263  techniki kroswalidacji, uwaga - ten argument dotyczy wszystkich uruchomie\u324 , za wyj\u261 tkiem uruchomie\u324 , gdzie dane testowe s\u261  czytane z pliku.\
+\
+procRozmObce <obce>\
+Rozmiar zbioru element\'f3w obcych wyra\uc0\u380 ony jako proporcja, np. procRozmObce=20 oznacza, \u380 e do wygenerowanego zboru treningowego dodajemy 20%*rozmiar_zbioru_treningowego danych \u347 mieci, a do zbioru testowego dodajemy 20%*rozmiar_zbioru_testowego danych-\u347 mieci. Argument w\u322 a\u347 ciwy tylko dla uruchomienia wymagaj\u261 cego wygenerowania danych tylko dla klasyfikacji z odrzucaniem.\
+\
+dyskretyzacja <dysk> \
+Ilo\uc0\u347 \u263  liter w alfabecie akceptowanym przez automat, liczba naturalna wi\u281 ksza od 1. Parametr obowi\u261 zkowy. \
+\
+ograniczNietermin <ogranicz>\
+Procentowe ograniczenie dla automatu niedeterministycznego. W zale\uc0\u380 no\u347 ci od implementacji i konfiguracji, np. dla 10 klas ograniczenie niedeterminizmu do 30% oznacza, \u380 e automat mo\u380 e si\u281  znajdowa\u263  r\'f3wnocze\u347 nie w maksymalnie 3 stanach. \
+\
+rownolegle <row>, mo\uc0\u380 liwe warto\u347 ci:\
+tak\
+nie\
+Czy wykonywane instrukcje maj\uc0\u261  by\u263  zr\'f3wnoleglone? Jest to funkcjonalno\u347 \u263  dodatkowa, wi\u281 kszo\u347 \u263  z Was jej nie b\u281 dzie wykorzystywa\u263 . St\u261 d, domy\u347 lnie i w przypadku braku tego parametru - warto\u347 \u263  nie. \
+\
+W nast\uc0\u281 pnej kolejno\u347 ci podawane s\u261  argumenty kontrolne dla PSO. Podawane parametry maj\u261  posta\u263  \'93-PSOpar <wartosc>\'94, gdzie par to odpowiednia etykieta danego parametru. Za obowi\u261 zuj\u261 c\u261  notacj\u281  przyjmujemy notacj\u281  z implementacji funkcji psoptim w R: {\field{\*\fldinst{HYPERLINK "http://cran.r-project.org/web/packages/pso/pso.pdf"}}{\fldrslt http://cran.r-project.org/web/packages/pso/pso.pdf}} Uwaga: Implementujemy wy\uc0\u322 \u261 cznie parametry kontrolne dla PSO: \'93control\'94!! Uwaga: prosz\u281  pomin\u261 \u263  parametry: vectorize, hybrid, hybrid.control, type.\
+\
+Dla przyk\uc0\u322 adu:\
+\
+PSOiter <iter>  - ilo\uc0\u347 \u263  iteracji PSO\
+PSOs <swarmsize> - rozmiar roju\
+\
+Brak kt\'f3rego\uc0\u347  z parametr\'f3w oznacza, \u380 e stosujemy warto\u347 ci domy\u347 lne dla SPSO2007, czyli takie jakie s\u261  domy\u347 lne w psoptim. W przypadku, gdy dana biblioteka nie implementuje wszystkich przekazanych argument\'f3w, argument nale\u380 y zignorowa\u263 .\
+\
+\
+\
+\
+\
+\
+}

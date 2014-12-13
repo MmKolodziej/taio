@@ -27,14 +27,16 @@ class PSO
   end
 
   def get_global_best(population, current_best=nil)
+    gbest_has_changed = false
     population.sort! { |x, y| x[:cost] <=> y[:cost] }
     best = population.first
-    if current_best.nil? || best[:cost] <= current_best[:cost]
+    if current_best.nil? || best[:cost] < current_best[:cost]
       current_best = {}
       current_best[:position] = Array.new(best[:position])
       current_best[:cost]     = best[:cost]
+      gbest_has_changed = true
     end
-    current_best
+    return current_best, gbest_has_changed
   end
 
   def update_velocity(particle, gbest, max_v, c1, c2)
@@ -61,6 +63,7 @@ class PSO
   end
 
   def update_best_position(particle)
+    # returns true if best position is updated
     return if particle[:cost] > particle[:b_cost]
     particle[:b_cost] = particle[:cost]
     particle[:b_position] = Array.new(particle[:position])
@@ -69,7 +72,8 @@ class PSO
   def search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
     puts "computing..."
     pop = Array.new(pop_size) { create_particle(search_space, vel_space) }
-    gbest = get_global_best(pop)
+    gbest, gbest_has_changed = get_global_best(pop)
+    iterations_wo_change = 0
     max_gens.times do |gen|
       pop.each do |particle|
         update_velocity(particle, gbest, max_vel, c1, c2)
@@ -77,13 +81,14 @@ class PSO
         particle[:cost] = objective_function(particle[:position])
         update_best_position(particle)
       end
-      gbest = get_global_best(pop, gbest)
-      print_progress(gen+1, gbest[:cost]) if verbose
+      gbest, gbest_has_changed = get_global_best(pop, gbest)
+      iterations_wo_change = gbest_has_changed ? 0 : iterations_wo_change + 1
+      print_progress(gen+1, gbest[:cost], iterations_wo_change) if verbose
     end
     gbest
   end
 
-  def print_progress(gen, fitness)
-    puts "> gen #{gen+1}, errors count: #{fitness}"
+  def print_progress(gen, fitness, iterations_wo_change)
+    puts "> gen #{gen+1}, errors count: #{fitness}, iterations without change: #{iterations_wo_change}"
   end
 end
