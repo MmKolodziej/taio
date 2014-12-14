@@ -4,9 +4,9 @@ require_relative '../image_generation/image_sample'
 require_relative 'ocr_pso'
 
 class FuzzyOcrPso < OcrPso
-  def initialize(symbols_list, states_count, images_filepath, rejecting_states = [], verbose = true)
-    super(symbols_list, states_count, images_filepath, rejecting_states, verbose)
-    self.automata = FuzzyAutomata.new(symbols_list, states_count, nil, rejecting_states)
+  def initialize(symbols_list, states_count, images_filepath, has_rejecting_states, verbose = true)
+    super(symbols_list, states_count, images_filepath, has_rejecting_states, verbose)
+    self.automata = FuzzyAutomata.new(symbols_list, self.states_count, nil, self.rejecting_states)
   end
 
   def cost_function(states, image)

@@ -4,10 +4,12 @@ require_relative '../image_generation/image_sample'
 require_relative 'ocr_pso'
 
 class NonDetOcrPso < OcrPso
-  def initialize(symbols_list, states_count, images_filepath, no_of_possible_states = 3, rejecting_states = [], verbose = true)
-    super(symbols_list, states_count, images_filepath, rejecting_states, verbose)
+  def initialize(symbols_list, states_count, images_filepath, has_rejecting_states, no_of_possible_states = 3, verbose = true)
+    super(symbols_list, states_count, images_filepath,has_rejecting_states, verbose)
 
-    self.automata = NonDeterministicAutomata.new(symbols_list, states_count, nil, no_of_possible_states, rejecting_states)
+    no_of_possible_states = 3 if no_of_possible_states == nil
+
+    self.automata = NonDeterministicAutomata.new(symbols_list, self.states_count, nil, no_of_possible_states, self.rejecting_states)
   end
 
   def cost_function(states, image)

@@ -3,21 +3,21 @@ require_relative 'pso.rb'
 require_relative '../image_generation/image_sample'
 
 class OcrPso < PSO
-  def initialize(symbols_list, states_count, images_filepath, rejecting_states = [], verbose = true, skip_duplicates = false)
+  def initialize(symbols_list, states_count, images_filepath, has_rejecting_states, verbose = true, skip_duplicates = false)
     self.verbose = verbose
     self.symbols_list = symbols_list
-
+    self.has_rejecting_states = has_rejecting_states
     #init images from filepath
     self.sample_images = OcrPso.create_words_from_image_vectors(ImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list, skip_duplicates)
 
     # if states_count not passed explicitly, it is equal to the number of different image classes
-    states_count = self.classes_count + rejecting_states.count if states_count == 0 || states_count == nil
-    self.states_count = states_count
+    self.states_count = self.classes_count if states_count == 0 || states_count == nil
+    self.rejecting_states = has_rejecting_states ? [self.states_count - 1] : []
 
-    self.automata = DeterministicAutomata.new(symbols_list, states_count, nil, rejecting_states)
+    self.automata = DeterministicAutomata.new(symbols_list, self.states_count, nil, self.rejecting_states)
   end
 
-  attr_accessor :symbols_list, :states_count, :automata, :sample_images, :verbose
+  attr_accessor :symbols_list, :states_count, :automata, :sample_images, :verbose, :has_rejecting_states, :rejecting_states
 
   def self.create_words_from_image_vectors(images, symbols_list, skip_duplicates = false)
 
@@ -58,7 +58,9 @@ class OcrPso < PSO
 
   def classes_count
     # returns the number of unique image classses
-    sample_images.uniq { |img| img.image_class}.size
+    count = sample_images.uniq { |img| img.image_class}.size
+    count += -1 if not self.has_rejecting_states
+    count
   end
 
   def images_count

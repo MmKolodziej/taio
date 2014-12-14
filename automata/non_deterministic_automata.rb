@@ -14,7 +14,6 @@ class NonDeterministicAutomata < BaseAutomata
   # returns: End state if computations successfull, False if word does not belong to automata alphabet
   def compute_word(word)
     return unless word_is_from_alphabet?(word)
-
     word.each do |symbol|
       self.current_states = compute_symbol(symbol)
     end
