@@ -1,6 +1,6 @@
 require 'test/unit'
 require_relative '../pso/ocr_pso'
-require_relative '../image_generation/csv_image_factory'
+require_relative '../image_generation/image_factory'
 require_relative '../pso/fuzzy_ocr_pso'
 require_relative '../automata/fuzzy_automata'
 
@@ -23,9 +23,9 @@ class ThirdPhaseTests < Test::Unit::TestCase
     test_set_sigma = 0.2
 
     # init image classes
-    CsvImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, LEARNING_SET_FILEPATH, no_of_objects)
-    CsvImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, TEST_SET_FILEPATH, no_of_objects)
+    ImageFactory.instance.generate_image_templates(no_of_classes, no_of_characteristics)
+    ImageFactory.instance.generate_images_csv(no_of_objects, learn_set_sigma, LEARNING_SET_FILEPATH, no_of_objects)
+    ImageFactory.instance.generate_images_csv(no_of_objects, test_set_sigma, TEST_SET_FILEPATH, no_of_objects)
     ################################################################
     rejecting_states = [states_count]
     states_count += rejecting_states.count
@@ -56,7 +56,7 @@ class ThirdPhaseTests < Test::Unit::TestCase
     a.set_transition_matrices_from_vector(best[:position])
 
     a.print_transition_matrix
-    test_set = OcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(TEST_SET_FILEPATH), symbols_list)
+    test_set = OcrPso.create_words_from_image_vectors(ImageFactory.instance.load_sample_images_from_csv(TEST_SET_FILEPATH), symbols_list)
 
     puts 'Testing generated automata on test set...'
     errors_count = 0

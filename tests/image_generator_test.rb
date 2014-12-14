@@ -19,7 +19,7 @@ class ImageGeneratorTest < Test::Unit::TestCase
     sigma = 0.2
 
     # init image classes
-    gen = CsvImageFactory.new()
+    gen = ImageFactory.new()
     gen.generate_image_templates(no_of_classes, no_of_characteristics)
 
     # factory method test

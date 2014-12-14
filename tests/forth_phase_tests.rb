@@ -1,12 +1,12 @@
 require 'test/unit'
 require_relative '../pso/ocr_pso'
-require_relative '../image_generation/csv_image_factory'
+require_relative '../image_generation/image_factory'
 
 class ForthPhaseTests < Test::Unit::TestCase
 
   def test_ocr_pso
     #init the pso object
-    images_filepath = '../jastrzebska/Native.csv'
+    images_filepath = '../jastrzebska/Native.xlsx'
     symbols_list = DeterministicAutomata.generate_symbols_list(12)
     states_count = 10
 
