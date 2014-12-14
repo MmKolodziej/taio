@@ -11,7 +11,7 @@ class OcrPso < PSO
     self.sample_images = OcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list, skip_duplicates)
 
     # if states_count not passed explicitly, it is equal to the number of different image classes
-    states_count = classes_count if states_count == 0 || states_count == nil
+    states_count = self.classes_count + rejecting_states.count if states_count == 0 || states_count == nil
     self.states_count = states_count
 
     self.automata = DeterministicAutomata.new(symbols_list, states_count, nil, rejecting_states)
