@@ -11,7 +11,7 @@ class ImageSampleTemplate
 
   def normalize(max_val = nil)
     self.characteristic_max_values = max_val ? max_val : self.characteristic_max_values
-    self.ideal_characteristics = self.ideal_characteristics.each_with_index.map { |val,index | val/(self.characteristic_max_values[index] - self.characteristic_min_values[index]) + characteristic_min_values[index]}
+    self.ideal_characteristics = self.ideal_characteristics.each_with_index.map { |val,index | val/(self.characteristic_max_values[index])}
   end
 
   def print
