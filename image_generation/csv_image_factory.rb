@@ -12,9 +12,9 @@ class CsvImageFactory
     return @@instance
   end
 
-  def generate_image_templates(no_of_classes, characteristics_count = 5, range_of_chars = 100.0)
+  def generate_image_templates(no_of_classes, characteristics_count = 5, chars_min = 0.0, chars_max = 100.0)
     self.characteristics_count = characteristics_count
-    self.template_images = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, characteristics_count, range_of_chars) }
+    self.template_images = Array.new(no_of_classes) { |i| ImageSampleTemplate.new(i, characteristics_count, chars_max) }
     max_vector = Array.new(characteristics_count) {0}
     self.template_images.each do |template|
       template.ideal_characteristics.each_with_index { |val, index | max_vector[index] = val if max_vector[index] < val }
@@ -50,6 +50,7 @@ class CsvImageFactory
     # TODO: add errors handling
     sample_images = []
     lines = CSV.read(filepath).map { |row| row.map(&:to_f)}
+    columns_to_skip = get_columns_to_skip(lines)
 
     # We assume that 0 is always the min value
     normalization_min_max_values = Hash.new {|h,k| h[k] = {min: 0, max: nil}}
@@ -57,7 +58,7 @@ class CsvImageFactory
     lines.each do |line|
       # update min and max values of the column
       line.each_with_index do |value, column_index|
-        if column_index == 0 # the first column is the class marker
+        if column_index == 0# the first column is the class marker
           next
         end
         current_col_min_max = normalization_min_max_values[column_index-1]
@@ -76,6 +77,19 @@ class CsvImageFactory
     lines.each { |line| sample_images << ImageSample.new(line[0].to_i, line[1..-1], normalization_min_max_values) }
     #puts "loaded #{sample_images.count} images"
     sample_images
+  end
+
+  def get_columns_to_skip(lines)
+    columns_to_skip = Array.new(lines[0].size){ false }
+
+    lines[0].each_with_index do |value, column_index|
+      if column_index == 0 # the first column is the class marker
+        next
+      end
+      columns_to_skip = lines.uniq{|line| line[column_index] }.count == 1
+
+    end
+    columns_to_skip
   end
 
   private_class_method :new

@@ -7,18 +7,17 @@ class ForthPhaseTests < Test::Unit::TestCase
   def test_ocr_pso
     #init the pso object
     images_filepath = '../jastrzebska/Native.csv'
-    symbols_list = DeterministicAutomata.generate_symbols_list(4)
+    symbols_list = DeterministicAutomata.generate_symbols_list(12)
     states_count = 10
 
-    pso =  OcrPso.new(symbols_list, states_count, images_filepath, nil, true, true)
+    pso =  OcrPso.new(symbols_list, 0, images_filepath, nil, true, true)
     puts pso.sample_images.count
 
     # problem configuration
     problem_size = states_count * symbols_list.count
     search_space = Array.new(problem_size) { |i| [0, states_count-1] }
-    image_classess = pso.classes_count
     images_count = pso.images_count
-    puts "we have #{image_classess} different symbols"
+    puts "we have #{pso.classes_count} different images"
 
     # algorithm configuration
     max_gens = 1000000

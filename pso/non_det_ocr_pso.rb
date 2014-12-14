@@ -5,15 +5,9 @@ require_relative 'ocr_pso'
 
 class NonDetOcrPso < OcrPso
   def initialize(symbols_list, states_count, images_filepath, no_of_possible_states = 3, rejecting_states = [], verbose = true)
-    self.verbose = verbose
+    super(symbols_list, states_count, images_filepath, rejecting_states, verbose)
 
     self.automata = NonDeterministicAutomata.new(symbols_list, states_count, nil, no_of_possible_states, rejecting_states)
-
-    self.states_count = states_count
-    self.symbols_list = symbols_list
-
-    #init images from filepath
-    self.sample_images = NonDetOcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list)
   end
 
   def cost_function(states, image)

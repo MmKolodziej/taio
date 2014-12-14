@@ -6,6 +6,9 @@ etap_automat_list = {
 "a5" => "automat rozmyty bez elementow obcych",
 "a6" => "automat rozmyty z elementami obcymi"
 }
+LEARNING_SET_FILEPATH = 'learning.csv'
+TEST_SET_FILEPATH = 'test.csv'
+
 
 def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sciezkaOutputErr, iloscKlas, iloscCech,
              iloscPowtorzenWKlasie, minLos, maxLos,  zaburzenie, procRozmTest, procRozmObce, procRozmZaburz, dyskretyzacja,
@@ -16,9 +19,11 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sci
   if wejscieTyp == "gen"
     # generate data for the automata
 
-    CsvImageFactory.instance.generate_image_templates(iloscKlas, iloscCech)
+    CsvImageFactory.instance.generate_image_templates(iloscKlas, iloscCech, maxLos)
     no_foreign_elements = (iloscPowtorzenWKlasie * iloscKlas * procRozmObce).to_i
     CsvImageFactory.instance.generate_images_csv(iloscPowtorzenWKlasie, zaburzenie, LEARNING_SET_FILEPATH, no_foreign_elements)
+    #TODO: load test data from part of the learning data
+    CsvImageFactory.instance.generate_images_csv(iloscPowtorzenWKlasie, zaburzenie, TEST_SET_FILEPATH, no_foreign_elements)
   elsif wejscieTyp == "czyt"
     # read data from file
   end

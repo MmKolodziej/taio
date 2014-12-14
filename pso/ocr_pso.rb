@@ -5,14 +5,16 @@ require_relative '../image_generation/image_sample'
 class OcrPso < PSO
   def initialize(symbols_list, states_count, images_filepath, rejecting_states = [], verbose = true, skip_duplicates = false)
     self.verbose = verbose
-
-    self.automata = DeterministicAutomata.new(symbols_list, states_count, nil, rejecting_states)
-
-    self.states_count = states_count
     self.symbols_list = symbols_list
 
     #init images from filepath
     self.sample_images = OcrPso.create_words_from_image_vectors(CsvImageFactory.instance.load_sample_images_from_csv(images_filepath),symbols_list, skip_duplicates)
+
+    # if states_count not passed explicitly, it is equal to the number of different image classes
+    states_count = classes_count if states_count == 0 || states_count == nil
+    self.states_count = states_count
+
+    self.automata = DeterministicAutomata.new(symbols_list, states_count, nil, rejecting_states)
   end
 
   attr_accessor :symbols_list, :states_count, :automata, :sample_images, :verbose
@@ -29,7 +31,7 @@ class OcrPso < PSO
     end
 
     if skip_duplicates
-      puts "skipping"
+      puts "skipping duplicates"
       images.uniq! {|image| image.word }
     end
 
