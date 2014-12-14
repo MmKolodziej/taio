@@ -1,10 +1,11 @@
 require_relative 'sample_image_template'
 require_relative '../helpers/random_gaussian'
 require_relative 'image_sample'
+require_relative 'test_file_reader'
 
 # Generates, loads and saves images from and to CSV
-class CsvImageFactory
-  @@instance = CsvImageFactory.new
+class ImageFactory
+  @@instance = ImageFactory.new
 
   attr_accessor :template_images, :characteristics_count, :range
 
@@ -49,7 +50,7 @@ class CsvImageFactory
     # returns array of sample images for each row of the csv
     # TODO: add errors handling
     sample_images = []
-    lines = CSV.read(filepath).map { |row| row.map(&:to_f)}
+    lines = TestFileReader.new(filepath).read_lines
     columns_to_skip = get_columns_to_skip(lines)
 
     # We assume that 0 is always the min value
