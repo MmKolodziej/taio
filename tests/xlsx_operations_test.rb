@@ -4,7 +4,7 @@ require 'rubyXL'
 
 class XlsxOperationsTest < Test::Unit::TestCase
   def test_simple_xlsx_reader
-    filepath = 'test_data/write_test_file.xlsx'
+    filepath = 'test_data/read_test_file.xlsx'
     doc = SimpleXlsxReader.open(filepath)
     sheet = doc.sheets.first
     assert_not_nil(sheet.rows[0])
