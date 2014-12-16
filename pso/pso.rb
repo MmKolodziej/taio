@@ -85,6 +85,7 @@ class PSO
       iterations_wo_change = gbest_has_changed ? 0 : iterations_wo_change + 1
       print_progress(gen+1, gbest[:cost], iterations_wo_change) if verbose
     end
+    puts
     gbest
   end
 

@@ -25,7 +25,8 @@ class FuzzyOcrPso < OcrPso
   def self.weighted_percentage_cost(end_states, image_class)
     # returns correct_state_weight to sum_of_all_weights ratio
     # say, for [0.2,0.3,0.95]: 0.95/(0.95+0.3+0.2)
-    error_percentage = end_states[image_class] / (end_states.inject(:+))
+    sum_of_weights = end_states.inject(:+)
+    error_percentage = sum_of_weights != 0 ? end_states[image_class] / sum_of_weights : 0
     1 - error_percentage
   end
 

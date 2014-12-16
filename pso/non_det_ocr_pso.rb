@@ -15,11 +15,11 @@ class NonDetOcrPso < OcrPso
   def cost_function(states, image)
     if image.image_class == -1
       return 1 if not automata.is_in_rejecting_state?
-    else if not states[image.image_class] == 1
-           return 1
+    else if states[image.image_class] == 1
+           return 1 - 1.0 / states.inject(:+)
          end
     end
-    0
+    1
   end
 
 end

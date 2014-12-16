@@ -32,7 +32,37 @@ class OcrPso < PSO
 
     if skip_duplicates
       puts "skipping duplicates"
-      images.uniq! {|image| image.word }
+
+      columns_count = images[0].word.size
+      columns_to_skip = Array.new(columns_count){ false }
+      columns_count.times do |i|
+        columns_to_skip[i] = images.uniq{ |image| image.word[i]}.count == 1
+      end
+
+      images.each do |image|
+        new_word = []
+        columns_count.times do |i|
+          new_word << image.word[i] unless columns_to_skip[i]
+        end
+        image.set_word(new_word)
+      end
+      puts images[0].word.count
+
+      cols_count = images[0].word.count
+      i = 0
+      while i < cols_count
+        j = i
+        while j < cols_count
+          if i != j
+            the_same = true
+            images.each {|image| the_same = false if image.word[i] != image.word[j] }
+            puts "#{i} #{j}" if the_same
+          end
+          j += 1
+        end
+        i += 1
+      end
+      #images.uniq! {|image| image.word }
     end
 
     images
@@ -57,9 +87,10 @@ class OcrPso < PSO
   end
 
   def classes_count
-    # returns the number of unique image classses
-    count = sample_images.uniq { |img| img.image_class}.size
-    count += -1 if not self.has_rejecting_states
+    # returns the number of unique image classes
+    unique_image_classes = sample_images.uniq { |img| img.image_class}
+    count = unique_image_classes.size
+    count += -1 if not self.has_rejecting_states and unique_image_classes.any?{ |image| image.image_class == -1}
     count
   end
 
@@ -68,7 +99,7 @@ class OcrPso < PSO
   end
 
   def print_progress(gen, fitness, iterations_wo_change)
-    puts "> gen #{gen+1}, errors count: #{fitness} (#{((fitness.to_f/sample_images.count)*100.0).round}%), iterations without change: #{iterations_wo_change}"
+    print "> gen #{gen+1}, errors count: #{fitness} (#{((fitness.to_f/sample_images.count)*100.0).round}%), iterations without change: #{iterations_wo_change} \r"
   end
 
 end

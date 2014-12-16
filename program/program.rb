@@ -16,8 +16,8 @@ LEARNING_SET_FILEPATH = "learning.csv"
 TEST_SET_FILEPATH = "test.csv"
 
 
-def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sciezkaOutputErr, iloscKlas, iloscCech,
-             iloscPowtorzenWKlasie, minLos, maxLos, procRozmTest, procRozmObce, procRozmZaburz, dyskretyzacja,
+def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaObceTrain, sciezkaObceTest, sciezkaOutputKlas, sciezkaOutputErr, iloscKlas, iloscCech,
+             iloscPowtorzenWKlasie, minLos, maxLos, procRozmTest, procRozmObce, zaburzenie, dyskretyzacja,
              ograniczNietermin, psoiter, psos, psok, psop, pso)
 
   puts "Etap #{etap}, #{ETAP_AUTOMAT_LIST[etap]}"
@@ -25,14 +25,26 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sci
   if wejscieTyp == "gen"
     # generate data for the automata
 
-    learn_set_filepath = LEARNING_SET_FILEPATH
-    test_set_filepath = TEST_SET_FILEPATH
+    learn_set_filepath = etap + "_" + LEARNING_SET_FILEPATH
+    test_set_filepath = etap + "_" + TEST_SET_FILEPATH
+    begin
+      File.delete(learn_set_filepath) if File.exists?(learn_set_filepath)
+      File.delete(test_set_filepath) if File.exists?(test_set_filepath)
 
-    ImageFactory.instance.generate_image_templates(iloscKlas, iloscCech, maxLos)
-    no_foreign_elements = (iloscPowtorzenWKlasie * iloscKlas * procRozmObce).to_i
-    ImageFactory.instance.generate_images_csv(iloscPowtorzenWKlasie, procRozmZaburz, LEARNING_SET_FILEPATH, no_foreign_elements)
-    #TODO: load test data from part of the learning data
-    ImageFactory.instance.generate_images_csv(iloscPowtorzenWKlasie, procRozmZaburz, TEST_SET_FILEPATH, no_foreign_elements)
+      ImageFactory.instance.generate_image_templates(iloscKlas, iloscCech, maxLos)
+      no_learning_images = iloscPowtorzenWKlasie * (100 - procRozmTest) / 100
+      no_foreign_elements = (no_learning_images * iloscKlas * procRozmObce / 100).to_i
+      ImageFactory.instance.generate_images_csv(no_learning_images, zaburzenie, learn_set_filepath, no_foreign_elements)
+
+      no_test_images = iloscPowtorzenWKlasie * procRozmTest / 100
+      no_foreign_elements = (no_test_images * iloscKlas * procRozmObce / 100).to_i
+      ImageFactory.instance.generate_images_csv(no_test_images, zaburzenie, test_set_filepath, no_foreign_elements)
+
+    rescue Exception
+      puts $!
+      exit 1
+    end
+
   elsif wejscieTyp == "czyt"
     # read data from file
     learn_set_filepath = sciezkaTrain
@@ -48,19 +60,19 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sci
     when "a1"
       pso = OcrPso.new(symbols_list, 0, learn_set_filepath, false, verbose)
       states_count = pso.states_count
-      automata = FuzzyAutomata.new(symbols_list, pso.states_count, nil, [])
+      automata = DeterministicAutomata.new(symbols_list, pso.states_count, nil, [])
     when "a2"
       pso = OcrPso.new(symbols_list, 0, learn_set_filepath, true, verbose)
       states_count = pso.states_count
-      automata = FuzzyAutomata.new(symbols_list, pso.states_count, nil, [states_count])
+      automata = DeterministicAutomata.new(symbols_list, pso.states_count, nil, [states_count])
     when "a3"
       pso = NonDetOcrPso.new(symbols_list, 0, learn_set_filepath, false, ograniczNietermin, verbose)
       states_count = pso.states_count
-      automata = FuzzyAutomata.new(symbols_list, pso.states_count, nil, [])
+      automata = NonDeterministicAutomata.new(symbols_list, pso.states_count, nil, ograniczNietermin, [])
     when "a4"
       pso = NonDetOcrPso.new(symbols_list, 0, learn_set_filepath, true, ograniczNietermin, verbose)
       states_count = pso.states_count
-      automata = FuzzyAutomata.new(symbols_list, pso.states_count, nil, [states_count])
+      automata = NonDeterministicAutomata.new(symbols_list, pso.states_count, nil, ograniczNietermin, [states_count])
     when "a5"
       pso = FuzzyOcrPso.new(symbols_list, 0, learn_set_filepath, false, verbose)
       states_count = pso.states_count
@@ -72,14 +84,14 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sci
   end
 
   # algorithm configuration
-  puts states_count
+  puts "Learning set contains #{pso.images_count} elements"
 
   if etap == "a1" || etap == "a2"
     # deterministic automata
 
     problem_size = states_count * symbols_list.count
-    search_space = Array.new(problem_size) { [0.0, states_count - 1] }
-    max_vel = states_count / 10
+    search_space = Array.new(problem_size) { [0.0, states_count - 1.0] }
+    max_vel = states_count / 10.0
   else
     problem_size = states_count * states_count * symbols_list.count
     search_space = Array.new(problem_size) { [0.0, 1.0] }
@@ -87,9 +99,11 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sci
   end
 
   vel_space = Array.new(problem_size) { [-max_vel, max_vel] }
-  c1, c2 = 1.0, 1.0
+  c1, c2 = 2.0, 1.0
   max_gens = psoiter
   pop_size = psos == 0 ? 10 + (2 * Math.sqrt(problem_size)).to_i : psos
+
+  puts "swarm_size = #{pop_size}, max_iter = #{psoiter}"
 
   # Execute the algorithm
   best = pso.search(max_gens, search_space, vel_space, pop_size, max_vel, c1, c2)
@@ -98,10 +112,14 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sci
   # OutputErr info
   puts "Blad na zbiorze treningowym: #{learning_error * 100.0}%"
   if sciezkaOutputErr != nil
-    File.delete(sciezkaOutputErr) if File.exists?(sciezkaOutputErr)
-    xlsx = XlsxDocWriter.new(sciezkaOutputErr)
-    xlsx.add_cell(0, 0, learning_error)
-    xlsx.write_to_file
+    begin
+      File.delete(sciezkaOutputErr) if File.exists?(sciezkaOutputErr)
+      xlsx = XlsxDocWriter.new(sciezkaOutputErr)
+      xlsx.add_cell(0, 0, learning_error)
+      xlsx.write_to_file
+    rescue Exception
+      puts $!
+    end
   end
 
   # Test on test images
@@ -109,6 +127,7 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sci
   puts 'Testing generated automata on test set...'
   errors_count = 0
   recognized_elements = []
+  automata.set_transition_matrices_from_vector(best[:position])
 
   test_set.each do |image|
     end_states = automata.compute_word(image.word)
@@ -116,24 +135,35 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaOutputKlas, sci
     case etap
       when "a1", "a2"
         error_val = 1 if end_states != image.image_class
-      when "a3", "a4"
+      when "a3"
+        error_val = 1
+        error_val -= end_states[image.image_class].to_f / end_states.inject(:+) if end_states[image.image_class] == 1
+      when "a4"
         if image.image_class == -1
-          error_val = 1 if not a.is_in_rejecting_state?
+          error_val = 1 if not automata.is_in_rejecting_state?
         else
-          error_val = 1 if not end_states[image.image_class] == 1
+          error_val = 1
+          error_val -= end_states[image.image_class].to_f / end_states.inject(:+) if end_states[image.image_class] == 1
         end
       when "a5", "a6"
-        error_val = FuzzyOcrPso.weighted_percentage_cost(end_states, image)
+        error_val = FuzzyOcrPso.weighted_percentage_cost(end_states, image.image_class)
     end
     errors_count += error_val
-    recognized_elements << image if error_val < 0.5
+    recognized_elements << image if error_val <= 0.5
   end
 
   if sciezkaOutputKlas != nil
-    File.delete(sciezkaOutputKlas) if File.exists?(sciezkaOutputKlas)
-    xlsx = XlsxDocWriter.new(sciezkaOutputKlas)
-    recognized_elements.each_with_index { |elem, index| xlsx.add_cell(index, 0, elem.image_class) }
-    xlsx.write_to_file
+    begin
+      File.delete(sciezkaOutputKlas) if File.exists?(sciezkaOutputKlas)
+      xlsx = XlsxDocWriter.new(sciezkaOutputKlas)
+      recognized_elements.each_with_index do |elem, index|
+        xlsx.add_cell(index, 0, elem.image_class)
+        xlsx.add_cell(index, 1, elem.word)
+      end
+      xlsx.write_to_file
+    rescue Exception
+      puts $!
+    end
   end
-
+  puts "Blad na zbiorze testowym: #{errors_count * 100.0 / test_set.count}"
 end
