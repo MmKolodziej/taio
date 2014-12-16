@@ -18,7 +18,7 @@ TEST_SET_FILEPATH = "test.csv"
 
 def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaObceTrain, sciezkaObceTest, sciezkaOutputKlas, sciezkaOutputErr, iloscKlas, iloscCech,
              iloscPowtorzenWKlasie, minLos, maxLos, procRozmTest, procRozmObce, zaburzenie, dyskretyzacja,
-             ograniczNietermin, psoiter, psos, psok, psop, pso)
+             ograniczNietermin, psoiter, psos, psocp, psocg, psostagnate, vmax)
 
   puts "Etap #{etap}, #{ETAP_AUTOMAT_LIST[etap]}"
 
@@ -33,11 +33,11 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaObceTrain, scie
 
       ImageFactory.instance.generate_image_templates(iloscKlas, iloscCech, maxLos)
       no_learning_images = iloscPowtorzenWKlasie * (100 - procRozmTest) / 100
-      no_foreign_elements = (no_learning_images * iloscKlas * procRozmObce / 100).to_i
+      no_foreign_elements = (no_learning_images * (iloscKlas + 1) * procRozmObce / 100).to_i
       ImageFactory.instance.generate_images_csv(no_learning_images, zaburzenie, learn_set_filepath, no_foreign_elements)
 
       no_test_images = iloscPowtorzenWKlasie * procRozmTest / 100
-      no_foreign_elements = (no_test_images * iloscKlas * procRozmObce / 100).to_i
+      no_foreign_elements = (no_test_images * (iloscKlas + 1) * procRozmObce / 100).to_i
       ImageFactory.instance.generate_images_csv(no_test_images, zaburzenie, test_set_filepath, no_foreign_elements)
 
     rescue Exception
@@ -91,15 +91,16 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaObceTrain, scie
 
     problem_size = states_count * symbols_list.count
     search_space = Array.new(problem_size) { [0.0, states_count - 1.0] }
-    max_vel = states_count / 10.0
+    max_vel = vmax == 0 ? states_count / 8.0 : vmax
   else
     problem_size = states_count * states_count * symbols_list.count
     search_space = Array.new(problem_size) { [0.0, 1.0] }
-    max_vel = 0.05
+    max_vel = vmax == 0 ? 0.05 : vmax
   end
 
   vel_space = Array.new(problem_size) { [-max_vel, max_vel] }
-  c1, c2 = 2.0, 1.0
+  c1 = psocp == 0 ? 1.0 : psocp
+  c2 = psocg == 0 ? 1.0 : psocg
   max_gens = psoiter
   pop_size = psos == 0 ? 10 + (2 * Math.sqrt(problem_size)).to_i : psos
 
@@ -122,48 +123,52 @@ def run_pso (etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaObceTrain, scie
     end
   end
 
-  # Test on test images
-  test_set = OcrPso.create_words_from_image_vectors(ImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
-  puts 'Testing generated automata on test set...'
-  errors_count = 0
-  recognized_elements = []
-  automata.set_transition_matrices_from_vector(best[:position])
+  if sciezkaTest != nil
+    # Test on test images
+    test_set = OcrPso.create_words_from_image_vectors(ImageFactory.instance.load_sample_images_from_csv(test_set_filepath), symbols_list)
+    puts 'Testing generated automata on test set...'
+    errors_count = 0
+    recognized_elements = []
+    automata.set_transition_matrices_from_vector(best[:position])
 
-  test_set.each do |image|
-    end_states = automata.compute_word(image.word)
-    error_val = 0
-    case etap
-      when "a1", "a2"
-        error_val = 1 if end_states != image.image_class
-      when "a3"
-        error_val = 1
-        error_val -= end_states[image.image_class].to_f / end_states.inject(:+) if end_states[image.image_class] == 1
-      when "a4"
-        if image.image_class == -1
-          error_val = 1 if not automata.is_in_rejecting_state?
-        else
+    test_set.each do |image|
+      end_states = automata.compute_word(image.word)
+      error_val = 0
+      case etap
+        when "a1", "a2"
+          error_val = 1 if end_states != image.image_class
+        when "a3"
           error_val = 1
           error_val -= end_states[image.image_class].to_f / end_states.inject(:+) if end_states[image.image_class] == 1
-        end
-      when "a5", "a6"
-        error_val = FuzzyOcrPso.weighted_percentage_cost(end_states, image.image_class)
+        when "a4"
+          if image.image_class == -1
+            error_val = 1 if not automata.is_in_rejecting_state?
+          else
+            error_val = 1
+            error_val -= end_states[image.image_class].to_f / end_states.inject(:+) if end_states[image.image_class] == 1
+          end
+        when "a5", "a6"
+          error_val = FuzzyOcrPso.weighted_percentage_cost(end_states, image.image_class)
+      end
+      errors_count += error_val
+      recognized_elements << image if error_val <= 0.5
     end
-    errors_count += error_val
-    recognized_elements << image if error_val <= 0.5
+
+    if sciezkaOutputKlas != nil
+      begin
+        File.delete(sciezkaOutputKlas) if File.exists?(sciezkaOutputKlas)
+        xlsx = XlsxDocWriter.new(sciezkaOutputKlas)
+        recognized_elements.each_with_index do |elem, index|
+          xlsx.add_cell(index, 0, elem.image_class)
+          xlsx.add_cell(index, 1, elem.word)
+        end
+        xlsx.write_to_file
+      rescue Exception
+        puts $!
+      end
+    end
+    puts "Blad na zbiorze testowym: #{errors_count * 100.0 / test_set.count}"
   end
 
-  if sciezkaOutputKlas != nil
-    begin
-      File.delete(sciezkaOutputKlas) if File.exists?(sciezkaOutputKlas)
-      xlsx = XlsxDocWriter.new(sciezkaOutputKlas)
-      recognized_elements.each_with_index do |elem, index|
-        xlsx.add_cell(index, 0, elem.image_class)
-        xlsx.add_cell(index, 1, elem.word)
-      end
-      xlsx.write_to_file
-    rescue Exception
-      puts $!
-    end
-  end
-  puts "Blad na zbiorze testowym: #{errors_count * 100.0 / test_set.count}"
+  learning_error
 end

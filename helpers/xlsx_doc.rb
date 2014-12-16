@@ -17,9 +17,18 @@ class XlsxDocWriter
     sheet.add_cell(row_index, column_index, val)
   end
 
+  def add_row(row_index, cells)
+    sheet = self.doc.worksheets[0]
+    cells.each_with_index do |cell, index|
+      sheet.add_cell(row_index, index, cell)
+    end
+    self.write_to_file
+  end
+
   def write_to_file
     self.doc.write(filepath)
   end
 
   attr_accessor :doc, :filepath
 end
+

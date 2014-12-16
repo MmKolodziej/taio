@@ -51,7 +51,7 @@ class ImageFactory
     # TODO: add errors handling
     sample_images = []
     lines = TestFileReader.new(filepath).read_lines
-    columns_to_skip = get_columns_to_skip(lines)
+    #columns_to_skip = get_columns_to_skip(lines)
 
     # We assume that 0 is always the min value
     normalization_min_max_values = Hash.new {|h,k| h[k] = {min: 0, max: nil}}
@@ -87,7 +87,7 @@ class ImageFactory
       if column_index == 0 # the first column is the class marker
         next
       end
-      columns_to_skip = lines.uniq{|line| line[column_index] }.count == 1
+      columns_to_skip[column_index] = lines.uniq{|line| line[column_index] }.count == 1
 
     end
     columns_to_skip

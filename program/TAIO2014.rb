@@ -22,9 +22,10 @@ dyskretyzacja = 12
 ograniczNietermin = 3
 psoiter = 1000
 psos = 0
-psok = nil
-psop = nil
-pso = nil
+psocp = 0
+psocg = 0
+psostagnate = 0
+vmax = 0
 
 
 pso_arguments = {}
@@ -81,6 +82,15 @@ begin
       psoiter = val.to_i
     when "psos"
       psos = val.to_i
+    when "psoc.p"
+      psocp = val.to_i
+    when "psoc.g"
+      psocg = val.to_i
+    when "psomaxit.stagnate"
+      psostagnate = val.to_i
+    when "v.max"
+      vmax = val.to_i
+
 
     else
       puts "Unknown argument: #{ARGV[i]}"
@@ -96,7 +106,7 @@ puts pso_arguments.inspect
 
 run_pso(etap, wejscieTyp, sciezkaTrain, sciezkaTest, sciezkaObceTrain, sciezkaObceTest, sciezkaOutputKlas, sciezkaOutputErr,
         iloscKlas, iloscCech, iloscPowtorzenWKlasie, minLos, maxLos, procRozmTest, procRozmObce, zaburzenie,
-        dyskretyzacja, ograniczNietermin, psoiter, psos, psok, psop, pso
+        dyskretyzacja, ograniczNietermin, psoiter, psos, psocp, psocg, psostagnate, vmax
 )
 
 
